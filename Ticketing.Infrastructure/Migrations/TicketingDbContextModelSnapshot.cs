@@ -168,12 +168,32 @@ namespace Ticketing.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            Name = "در حال انجام"
+                            Name = "ارجاع به ویرا"
                         },
                         new
                         {
                             Id = 4,
                             Name = "ردشده"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "بازگشت از ویرا"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "انجام شد در انتظار تایید"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "در صف انجام پردازش"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "در حال انجام"
                         });
                 });
 
@@ -213,7 +233,7 @@ namespace Ticketing.Infrastructure.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
-                    b.Property<int>("RequestTypeId")
+                    b.Property<int?>("RequestTypeId")
                         .HasColumnType("int");
 
                     b.Property<int>("StatusId")
