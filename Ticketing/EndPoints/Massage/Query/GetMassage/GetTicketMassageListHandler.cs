@@ -6,8 +6,8 @@ namespace Ticketing.EndPoints.Massage.Query.GetMassage;
 
 public class GetTicketMassageListHandler
 {
-    public class Handler(IMassageService massageService,ITicketService ticketService,
-        IStatusService statusService,IHttpContextAccessor httpContextAccessor,IProjectService projectService,ILogger<GetTicketMassageListQuery> _logger):IRequestHandler<GetTicketMassageListQuery,object>
+    public class Handler(IMassageService massageService, ITicketService ticketService,
+        IStatusService statusService, IHttpContextAccessor httpContextAccessor, IProjectService projectService, ILogger<GetTicketMassageListQuery> _logger) : IRequestHandler<GetTicketMassageListQuery, object>
     {
         public async Task<object> Handle(GetTicketMassageListQuery request, CancellationToken cancellationToken)
         {
@@ -23,26 +23,27 @@ public class GetTicketMassageListHandler
                     ticketInfo = new
                     {
                         Id = ticketinfo.Id,
+                        TicketNumber = ticketinfo.TicketNumber,
                         Title = ticketinfo.Title,
                         StatusId = ticketinfo.StatusId,
-                        Status = liststatus.FirstOrDefault(a=>a.Id==ticketinfo.StatusId).Name,
-                        Username= ticketinfo.Username,
-                        Date = p.GetYear(ticketinfo.InsertDate)+"/"+p.GetMonth(ticketinfo.InsertDate)+"/"+p.GetDayOfMonth(ticketinfo.InsertDate),
-                        Project = listprojects.FirstOrDefault(a=>a.Id==ticketinfo.ProjectId).Name,
-                        ProjectId = listprojects.FirstOrDefault(a=>a.Id==ticketinfo.ProjectId).Id,
-                        Priority= ticketinfo.Priority,
-                        Text=ticketinfo.Text,
-                        File = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}"+"/Files/"+ticketinfo.FilePath,
+                        Status = liststatus.FirstOrDefault(a => a.Id == ticketinfo.StatusId).Name,
+                        Username = ticketinfo.Username,
+                        Date = p.GetYear(ticketinfo.InsertDate) + "/" + p.GetMonth(ticketinfo.InsertDate) + "/" + p.GetDayOfMonth(ticketinfo.InsertDate),
+                        Project = listprojects.FirstOrDefault(a => a.Id == ticketinfo.ProjectId).Name,
+                        ProjectId = listprojects.FirstOrDefault(a => a.Id == ticketinfo.ProjectId).Id,
+                        Priority = ticketinfo.Priority,
+                        Text = ticketinfo.Text,
+                        File = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}" + "/Files/" + ticketinfo.FilePath,
                         UserId = ticketinfo.UserId,
-                        HaveFile= !(ticketinfo.FilePath.Trim()=="")
+                        HaveFile = !(ticketinfo.FilePath.Trim() == "")
                     },
-                    messageList = messageList.Select(x=> new
+                    messageList = messageList.Select(x => new
                     {
                         Id = x.Id,
                         Text = x.Text,
                         Username = x.Username,
                         UserId = x.UserId,
-                        Date = p.GetYear(x.InsertDate)+"/"+p.GetMonth(x.InsertDate)+"/"+p.GetDayOfMonth(x.InsertDate)
+                        Date = p.GetYear(x.InsertDate) + "/" + p.GetMonth(x.InsertDate) + "/" + p.GetDayOfMonth(x.InsertDate)
                     })
                 };
             }
