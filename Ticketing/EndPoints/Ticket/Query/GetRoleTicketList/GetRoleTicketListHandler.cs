@@ -29,10 +29,23 @@ public class GetRoleTicketListHandler
                 }
                 else
                 {
-                    result = await ticketService.ListAsync(a => (a.CurrentRoleId == request.RoleId &&
-                                                                                    a.StatusId == request.Status) ||
-                                                                                    (a.UserId == request.UserId &&
-                                                                                    a.StatusId == request.Status));
+                    if (request.Status == 8)
+                    {
+
+                        result = await ticketService.ListAsync(a => (a.CurrentRoleId == request.RoleId &&
+                                                                                        (a.StatusId!=1 && a.StatusId != 2 && a.StatusId != 4)) ||
+                                                                                        (a.UserId == request.UserId &&
+                                                                                        (a.StatusId != 1 && a.StatusId != 2 && a.StatusId != 4)));
+                    }
+                    else
+                    {
+
+                        result = await ticketService.ListAsync(a => (a.CurrentRoleId == request.RoleId &&
+                                                                                        a.StatusId == request.Status) ||
+                                                                                        (a.UserId == request.UserId &&
+                                                                                        a.StatusId == request.Status));
+
+                    }
                 }
 
                 var persiandate = new System.Globalization.PersianCalendar();

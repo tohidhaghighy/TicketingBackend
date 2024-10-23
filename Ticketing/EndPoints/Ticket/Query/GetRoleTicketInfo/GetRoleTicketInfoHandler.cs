@@ -12,14 +12,23 @@ public class GetRoleTicketInfoHandler
             try
             {
                 var listtickets = await ticketService.ListAsync(a => a.CurrentRoleId == request.RoleId || a.UserId == request.UserId);
+                var inProgresCount = 0;
+
                 if (request.RoleId == 4)
                 {
                     listtickets = await ticketService.ListAsync(null);
+                    inProgresCount = listtickets.Where(a => a.StatusId == 8).Count();
                 }
                 else if (request.RoleId == 5)
                 {
                     listtickets = await ticketService.ListAsync(a => a.StatusId != 2 || a.UserId == request.UserId);
+                    inProgresCount = listtickets.Where(a => a.StatusId == 8).Count();
                 }
+                else
+                {
+                    inProgresCount = listtickets.Where(a => a.StatusId != 1 && a.StatusId != 2 && a.StatusId != 4).Count();
+                }
+
                 return new
                 {
                     done = listtickets.Where(a => a.StatusId == 1).Count(),
@@ -29,7 +38,7 @@ public class GetRoleTicketInfoHandler
                     sendtotaz = listtickets.Where(a => a.StatusId == 5).Count(),
                     awaitingConfirmation = listtickets.Where(a => a.StatusId == 6).Count(),
                     inLine = listtickets.Where(a => a.StatusId == 7).Count(),
-                    inProgress = listtickets.Where(a => a.StatusId == 8).Count(),
+                    inProgress = inProgresCount,
                     total = listtickets.Count()
                 };
             }
