@@ -33,13 +33,17 @@ public class GetYearTickerInfoHandler
 
                 for (var i = 1; i < 13; i++)
                 {
-                    int doneCount = result.Where(a=>p.GetMonth(a.InsertDate) == i && a.StatusId==1).Count();
-                    int rejectCount = result.Where(a=> p.GetMonth(a.InsertDate) == i && a.StatusId==4).Count();
-                    int doningCount = result.Where(a=> p.GetMonth(a.InsertDate) == i && a.StatusId==3).Count();
-                    int newCount = result.Where(a => p.GetMonth(a.InsertDate) == i && a.StatusId == 2).Count();
+                    int done = result.Where(a=>p.GetMonth(a.InsertDate) == i && a.StatusId == 1).Count();
+                    int inserted = result.Where(a => p.GetMonth(a.InsertDate) == i && a.StatusId == 2).Count();
+                    int sendtovira = result.Where(a=> p.GetMonth(a.InsertDate) == i && a.StatusId == 3).Count();
+                    int reject = result.Where(a=> p.GetMonth(a.InsertDate) == i && a.StatusId == 4).Count();
+                    int sendtotaz = result.Where(a => p.GetMonth(a.InsertDate) == i && a.StatusId == 5).Count();
+                    int awaitingConfirmation = result.Where(a => p.GetMonth(a.InsertDate) == i && a.StatusId == 6).Count();
+                    int inLine = result.Where(a => p.GetMonth(a.InsertDate) == i && a.StatusId == 7).Count();
+                    int inProgress = result.Where(a => p.GetMonth(a.InsertDate) == i && a.StatusId == 8).Count();
                     resultyear.Add(new MonthTicketItem() {
                         Month = GetMonth(i),
-                        Value = doneCount+ rejectCount+ doningCount+ newCount,
+                        Value = done+inserted+sendtovira+reject+sendtotaz+awaitingConfirmation+inLine+inProgress,
                     });
                 }
 

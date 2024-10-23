@@ -4,7 +4,7 @@ using Ticketing.Infrastructure.EntityTypeConfiguration;
 
 namespace Ticketing.Infrastructure.Database;
 
-public class TicketingDbContext: DbContext
+public class TicketingDbContext : DbContext
 {
     public TicketingDbContext(DbContextOptions<TicketingDbContext> options)
         : base(options)
@@ -17,19 +17,19 @@ public class TicketingDbContext: DbContext
         modelBuilder.Entity<Project>().HasData(
            new Project
            {
-               Id=1,
+               Id = 1,
                Name = "سامانه مدیریت پرونده ها",
            }, new Project
            {
-               Id=2,
+               Id = 2,
                Name = "سامانه میز خدمت",
            }, new Project
            {
-               Id=3,
+               Id = 3,
                Name = "سامانه امحا",
            }, new Project
            {
-               Id=4,
+               Id = 4,
                Name = "سامانه تبادل اطلاعات",
            }
        );
@@ -61,24 +61,36 @@ public class TicketingDbContext: DbContext
         modelBuilder.Entity<Status>().HasData(
           new Status
           {
-              Id=1,
+              Id = 1,
               Name = "انجام شده"
           }, new Status
           {
-              Id =2,
+              Id = 2,
               Name = "جدید"
           }, new Status
           {
-              Id=3,
+              Id = 3,
               Name = "ارجاع به ویرا"
           }, new Status
           {
-              Id=4,
+              Id = 4,
               Name = "ردشده"
           }, new Status
           {
               Id = 5,
               Name = "بازگشت از ویرا"
+          }, new Status
+          {
+              Id = 6,
+              Name = "انجام شد در انتظار تایید"
+          }, new Status
+          {
+              Id = 7,
+              Name = "در صف انجام پردازش"
+          }, new Status
+          {
+              Id = 8,
+              Name = "در حال انجام"
           }
       );
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProjectEntityTypeConfiguration).Assembly);
