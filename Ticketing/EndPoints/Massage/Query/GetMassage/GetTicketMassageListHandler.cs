@@ -43,7 +43,8 @@ public class GetTicketMassageListHandler
                         Text = x.Text,
                         Username = x.Username,
                         UserId = x.UserId,
-                        Date = p.GetYear(x.InsertDate) + "/" + p.GetMonth(x.InsertDate) + "/" + p.GetDayOfMonth(x.InsertDate)
+                        Date = p.GetYear(x.InsertDate) + "/" + p.GetMonth(x.InsertDate) + "/" + p.GetDayOfMonth(x.InsertDate),
+                        HaveFile = !(x.FilePath.Trim() == "")
                     })
                 };
             }
