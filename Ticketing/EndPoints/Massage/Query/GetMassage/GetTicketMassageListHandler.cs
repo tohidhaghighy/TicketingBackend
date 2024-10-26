@@ -44,7 +44,8 @@ public class GetTicketMassageListHandler
                         Username = x.Username,
                         UserId = x.UserId,
                         Date = p.GetYear(x.InsertDate) + "/" + p.GetMonth(x.InsertDate) + "/" + p.GetDayOfMonth(x.InsertDate),
-                        HaveFile = !(x.FilePath.Trim() == "")
+                        File = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}" + "/Files/" + ticketinfo.FilePath,
+                        HaveFile = !string.IsNullOrWhiteSpace(x.FilePath)
                     })
                 };
             }
