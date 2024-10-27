@@ -12,8 +12,8 @@ using Ticketing.Infrastructure.Database;
 namespace Ticketing.Infrastructure.Migrations
 {
     [DbContext(typeof(TicketingDbContext))]
-    [Migration("20241026130238_Add-FilePath-property-to-massage")]
-    partial class AddFilePathpropertytomassage
+    [Migration("20241027070402_InitialDb")]
+    partial class InitialDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
