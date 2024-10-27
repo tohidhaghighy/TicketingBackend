@@ -20,7 +20,5 @@ public class MassageEntityTypeConfiguration: IEntityTypeConfiguration<Massage>
             .HasForeignKey(massage => massage.TicketId);
         builder.Property(b => b.Text)
             .HasColumnType("nvarchar(max)");
-        builder.Property(b => b.FilePath)
-            .HasColumnType("nvarchar(max)");
     }
 }

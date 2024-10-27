@@ -18,7 +18,7 @@ public class GetTicketMassageListHandler
                 var ticketinfo = await ticketService.GetAsync(a => a.Id == request.TicketId);
                 var messageList = await massageService.ListAsync(a => a.TicketId == request.TicketId);
                 var p = new PersianCalendar();
-                return new
+                var x = new
                 {
                     ticketInfo = new
                     {
@@ -44,9 +44,11 @@ public class GetTicketMassageListHandler
                         Username = x.Username,
                         UserId = x.UserId,
                         Date = p.GetYear(x.InsertDate) + "/" + p.GetMonth(x.InsertDate) + "/" + p.GetDayOfMonth(x.InsertDate),
+                        FilePath = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}" + "/Files/" + ticketinfo.FilePath,
                         HaveFile = !string.IsNullOrWhiteSpace(x.FilePath)
                     })
                 };
+                return x;
             }
             catch (Exception ex)
             {

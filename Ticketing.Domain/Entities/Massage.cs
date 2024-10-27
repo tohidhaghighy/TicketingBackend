@@ -13,5 +13,5 @@ public class Massage : BaseEntity<int>
     public DateTime InsertDate { get; set; }
     public int UserId { get; set; }
     public string Username { get; set; }
-    public string FilePath { get; set; }
+    public string? FilePath { get; set; }
 }

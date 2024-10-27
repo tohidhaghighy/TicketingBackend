@@ -13,9 +13,9 @@ public class MassageDownloadFileQuery : IRequest<MasaageDownloadFileResponce>
 {
     public int massageId { get; set; }
 }
-public class DownloadFile
+public class DownloadMessageFile
 {
-    public class Handler(IMassageService massageService, ILogger<DownloadFile> _logger) : IRequestHandler<MassageDownloadFileQuery, MasaageDownloadFileResponce>
+    public class Handler(IMassageService massageService, ILogger<DownloadMessageFile> _logger) : IRequestHandler<MassageDownloadFileQuery, MasaageDownloadFileResponce>
     {
         public async Task<MasaageDownloadFileResponce> Handle(MassageDownloadFileQuery request, CancellationToken cancellationToken)
         {
