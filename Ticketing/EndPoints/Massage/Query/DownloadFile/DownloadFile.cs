@@ -22,7 +22,7 @@ public class DownloadMessageFile
             try
             {
                 var result = await massageService.GetAsync(a => a.Id == request.massageId);
-                string path = Path.Combine(Directory.GetCurrentDirectory(), "File");
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "Files");
                 string fileNameWithPath = Path.Combine(path, result.FilePath);
 
                 return new MasaageDownloadFileResponce()

@@ -23,7 +23,8 @@ public class AddMassageHandler
                     FileInfo fileInfo = new FileInfo(request.File.FileName);
                     if (!fileInfo.Extension.Contains("exe"))
                     {
-                        fileName = Guid.NewGuid() + fileInfo.Extension;
+                        fileName = Guid.NewGuid()+fileInfo.Extension; 
+
                         string fileNameWithPath = Path.Combine(path, fileName);
                         using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
                         {
