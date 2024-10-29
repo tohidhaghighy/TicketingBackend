@@ -22,4 +22,6 @@ public class Ticket : BaseEntity<int>
     public int ProjectId { get; set; }
     public RequestType? RequestTypeId { get; set; }
     public DateTime? LastChangeDatetime { get; set; }
+    public string? TicketTime { get; set; }
+    public Developer DeveloperId { get; set; }
 }

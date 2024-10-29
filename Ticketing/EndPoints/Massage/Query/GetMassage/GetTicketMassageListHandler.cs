@@ -1,6 +1,7 @@
 using System.Globalization;
 using MediatR;
 using Ticketing.Domain.Contracts;
+using Ticketing.Domain.Enums;
 
 namespace Ticketing.EndPoints.Massage.Query.GetMassage;
 
@@ -35,7 +36,9 @@ public class GetTicketMassageListHandler
                         Text = ticketinfo.Text,
                         File = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}" + "/Files/" + ticketinfo.FilePath,
                         UserId = ticketinfo.UserId,
-                        HaveFile = !(ticketinfo.FilePath.Trim() == "")
+                        HaveFile = !(ticketinfo.FilePath.Trim() == ""),
+                        TicketTime=ticketinfo.TicketTime,
+                        DeveloperId=ticketinfo.DeveloperId,
                     },
                     messageList = messageList.Select(x => new
                     {
