@@ -1,4 +1,5 @@
 using MediatR;
+using Ticketing.Application.Service.Massage;
 using Ticketing.Domain.Contracts;
 
 namespace Ticketing.EndPoints.Massage.Command.AddMassage;
@@ -11,14 +12,35 @@ public class AddMassageHandler
         {
             try
             {
+                string fileName = "";
+                if (request.File != null)
+                {
+                    string path = Path.Combine(Directory.GetCurrentDirectory(), "Files");
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    FileInfo fileInfo = new FileInfo(request.File.FileName);
+                    if (!fileInfo.Extension.Contains("exe"))
+                    {
+                        fileName = Guid.NewGuid()+fileInfo.Extension; 
+
+                        string fileNameWithPath = Path.Combine(path, fileName);
+                        using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                        {
+                            request.File.CopyTo(stream);
+                        }
+                    }
+                }
                 return await massageService.AddAsync(new Domain.Entities.Massage()
                 {
                     Text = request.Text,
                     TicketId = request.TicketId,
                     InsertDate = DateTime.Now,
                     UserId = request.UserId,
-                    Username = request.Username
-                });
+                    Username=request.Username,
+                    FilePath=fileName,
+                });   
             }
             catch (Exception ex)
             {

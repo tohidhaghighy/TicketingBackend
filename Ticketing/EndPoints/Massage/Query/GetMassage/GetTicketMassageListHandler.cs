@@ -1,6 +1,7 @@
 using System.Globalization;
 using MediatR;
 using Ticketing.Domain.Contracts;
+using Ticketing.Domain.Enums;
 
 namespace Ticketing.EndPoints.Massage.Query.GetMassage;
 
@@ -18,7 +19,7 @@ public class GetTicketMassageListHandler
                 var ticketinfo = await ticketService.GetAsync(a => a.Id == request.TicketId);
                 var messageList = await massageService.ListAsync(a => a.TicketId == request.TicketId);
                 var p = new PersianCalendar();
-                return new
+                var x = new
                 {
                     ticketInfo = new
                     {
@@ -35,7 +36,9 @@ public class GetTicketMassageListHandler
                         Text = ticketinfo.Text,
                         File = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}" + "/Files/" + ticketinfo.FilePath,
                         UserId = ticketinfo.UserId,
-                        HaveFile = !(ticketinfo.FilePath.Trim() == "")
+                        HaveFile = !(ticketinfo.FilePath.Trim() == ""),
+                        TicketTime=ticketinfo.TicketTime,
+                        DeveloperId=ticketinfo.DeveloperId,
                     },
                     messageList = messageList.Select(x => new
                     {
@@ -43,9 +46,12 @@ public class GetTicketMassageListHandler
                         Text = x.Text,
                         Username = x.Username,
                         UserId = x.UserId,
-                        Date = p.GetYear(x.InsertDate) + "/" + p.GetMonth(x.InsertDate) + "/" + p.GetDayOfMonth(x.InsertDate)
+                        Date = p.GetYear(x.InsertDate) + "/" + p.GetMonth(x.InsertDate) + "/" + p.GetDayOfMonth(x.InsertDate),
+                        FilePath = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}" + "/Files/" + ticketinfo.FilePath,
+                        HaveFile = !string.IsNullOrWhiteSpace(x.FilePath)
                     })
                 };
+                return x;
             }
             catch (Exception ex)
             {

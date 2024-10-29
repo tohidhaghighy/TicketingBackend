@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Ticketing.Infrastructure.Database;
 
@@ -11,9 +12,11 @@ using Ticketing.Infrastructure.Database;
 namespace Ticketing.Infrastructure.Migrations
 {
     [DbContext(typeof(TicketingDbContext))]
-    partial class TicketingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241027104134_Add-filePath")]
+    partial class AddfilePath
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -214,9 +217,6 @@ namespace Ticketing.Infrastructure.Migrations
                     b.Property<int>("CurrentRoleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("DeveloperId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ExcelRow")
                         .HasColumnType("int");
 
@@ -255,9 +255,6 @@ namespace Ticketing.Infrastructure.Migrations
 
                     b.Property<int?>("TicketRowNumber")
                         .HasColumnType("int");
-
-                    b.Property<string>("TicketTime")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
