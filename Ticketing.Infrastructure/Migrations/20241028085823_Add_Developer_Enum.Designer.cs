@@ -12,8 +12,8 @@ using Ticketing.Infrastructure.Database;
 namespace Ticketing.Infrastructure.Migrations
 {
     [DbContext(typeof(TicketingDbContext))]
-    [Migration("20241005115053_addrequestype")]
-    partial class addrequestype
+    [Migration("20241028085823_Add_Developer_Enum")]
+    partial class Add_Developer_Enum
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,9 @@ namespace Ticketing.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("InsertDate")
                         .HasColumnType("datetime2");
@@ -171,12 +174,32 @@ namespace Ticketing.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            Name = "در حال انجام"
+                            Name = "ارجاع به ویرا"
                         },
                         new
                         {
                             Id = 4,
                             Name = "ردشده"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "بازگشت از ویرا"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "انجام شد در انتظار تایید"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "در صف انجام پردازش"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "در حال انجام"
                         });
                 });
 
@@ -192,6 +215,9 @@ namespace Ticketing.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("CurrentRoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DeveloperId")
                         .HasColumnType("int");
 
                     b.Property<int?>("ExcelRow")
@@ -216,7 +242,7 @@ namespace Ticketing.Infrastructure.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
-                    b.Property<int>("RequestTypeId")
+                    b.Property<int?>("RequestTypeId")
                         .HasColumnType("int");
 
                     b.Property<int>("StatusId")
@@ -232,6 +258,9 @@ namespace Ticketing.Infrastructure.Migrations
 
                     b.Property<int?>("TicketRowNumber")
                         .HasColumnType("int");
+
+                    b.Property<string>("TicketTime")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()

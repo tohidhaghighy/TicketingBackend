@@ -12,8 +12,8 @@ using Ticketing.Infrastructure.Database;
 namespace Ticketing.Infrastructure.Migrations
 {
     [DbContext(typeof(TicketingDbContext))]
-    [Migration("20240903205000_first")]
-    partial class first
+    [Migration("20241027103921_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -113,6 +113,32 @@ namespace Ticketing.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProjectRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ProjectId = 1,
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ProjectId = 2,
+                            RoleId = 3
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ProjectId = 3,
+                            RoleId = 6
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ProjectId = 4,
+                            RoleId = 7
+                        });
                 });
 
             modelBuilder.Entity("Ticketing.Domain.Entities.Status", b =>
@@ -145,12 +171,32 @@ namespace Ticketing.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            Name = "در حال انجام"
+                            Name = "ارجاع به ویرا"
                         },
                         new
                         {
                             Id = 4,
                             Name = "ردشده"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "بازگشت از ویرا"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "انجام شد در انتظار تایید"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "در صف انجام پردازش"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "در حال انجام"
                         });
                 });
 
@@ -188,6 +234,9 @@ namespace Ticketing.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RequestTypeId")
                         .HasColumnType("int");
 
                     b.Property<int>("StatusId")

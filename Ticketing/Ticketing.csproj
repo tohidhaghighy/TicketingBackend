@@ -27,10 +27,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Files\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Ticketing.Application\Ticketing.Application.csproj" />
       <ProjectReference Include="..\Ticketing.Infrastructure\Ticketing.Infrastructure.csproj" />
     </ItemGroup>

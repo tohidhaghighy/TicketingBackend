@@ -10,11 +10,12 @@ public class AddMassageModule : ICarterModule
     {
         app.MapPost(
                 "api/v1/addMassage",
-                async (IMediator mediator, [FromBody] AddMassageQuery query,
+                async (IMediator mediator, [FromForm] AddMassageQuery query,
                     CancellationToken cancellationToken) =>
                 {
                     return await mediator.Send(query, cancellationToken);
                 })
+            .DisableAntiforgery()
             .WithOpenApi()
             .WithTags("Massage")
             .Produces<object[]>();

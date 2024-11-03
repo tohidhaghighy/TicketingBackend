@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Ticketing.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class first : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -93,6 +93,7 @@ namespace Ticketing.Infrastructure.Migrations
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     InsertedRoleId = table.Column<int>(type: "int", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
+                    RequestTypeId = table.Column<int>(type: "int", nullable: true),
                     LastChangeDatetime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -130,6 +131,17 @@ namespace Ticketing.Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "ProjectRoles",
+                columns: new[] { "Id", "ProjectId", "RoleId" },
+                values: new object[,]
+                {
+                    { 1, 1, 2 },
+                    { 2, 2, 3 },
+                    { 3, 3, 6 },
+                    { 4, 4, 7 }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Projects",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
@@ -147,8 +159,12 @@ namespace Ticketing.Infrastructure.Migrations
                 {
                     { 1, "انجام شده" },
                     { 2, "جدید" },
-                    { 3, "در حال انجام" },
-                    { 4, "ردشده" }
+                    { 3, "ارجاع به ویرا" },
+                    { 4, "ردشده" },
+                    { 5, "بازگشت از ویرا" },
+                    { 6, "انجام شد در انتظار تایید" },
+                    { 7, "در صف انجام پردازش" },
+                    { 8, "در حال انجام" }
                 });
 
             migrationBuilder.CreateIndex(
