@@ -12,5 +12,6 @@
         e_ebrahimi = 8 ,
         s_mohamadzadeh = 9,
         unknown =0,
+        all=-1
     }
 }
