@@ -99,7 +99,6 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                 return "تعریف نشده";
             }
             
-            
             public async Task<FileContentResult> Handle(GetReportQuery request, CancellationToken cancellationToken)
             {
                 try
@@ -107,77 +106,18 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                     var result = new List<Domain.Entities.Ticket>();
                     var liststatus = await statusService.ListAsync(null);
                     var listProject = await projectService.ListAsync(null);
-                    var footersum = new List<string>();
-                    request.EndDateTime = request.EndDateTime.AddHours(23);
-                    request.EndDateTime = request.EndDateTime.AddMinutes(59);
+                    var footersum = new List<string>(); // For foter sum colum (Empty in this code)
+                    request.EndDateTime = request.EndDateTime.AddHours(23);// Explanations in the bottom line
+                    request.EndDateTime = request.EndDateTime.AddMinutes(59); // to set the end day time to 11:59 p.m
 
-                    if (request.ProjectId == ((int)ProjectId.all) &&
-                        request.Priority == Priority.all &&
-                        request.RequestType == RequestType.all &&
-                        request.StatusId == ((int)StatusId.all) &&
-                        request.DeveloperId == Developer.all)
-                    {
-                        result = await ticketService.ListAsync(a => (a.InsertDate >= request.StartDateTime
-                                                                    || a.CloseDate >= request.StartDateTime) &&
-                                                                    (a.InsertDate <= request.EndDateTime
-                                                                    || a.CloseDate <= request.EndDateTime));
-                    }
-                    else if (request.Priority == Priority.all &&
-                             request.RequestType == RequestType.all &&
-                             request.StatusId == ((int)StatusId.all) &&
-                             request.DeveloperId == Developer.all)
-                    {
-                        result = await ticketService.ListAsync(a => a.ProjectId == request.ProjectId &&
-                                                                    (a.InsertDate >= request.StartDateTime
-                                                                    || a.CloseDate > request.StartDateTime) &&
-                                                                    (a.InsertDate <= request.EndDateTime
-                                                                    || a.CloseDate <= request.EndDateTime));
-                    }
-                    else if (request.RequestType == RequestType.all &&
-                             request.StatusId == ((int)StatusId.all) &&
-                             request.DeveloperId == Developer.all)
-                    {
-                        result = await ticketService.ListAsync(a => a.ProjectId == request.ProjectId &&
-                                                                    a.Priority == request.Priority &&
-                                                                    (a.InsertDate >= request.StartDateTime
-                                                                    || a.CloseDate > request.StartDateTime) &&
-                                                                    (a.InsertDate <= request.EndDateTime
-                                                                    || a.CloseDate <= request.EndDateTime));
-                    }
-                    else if (request.StatusId == ((int)StatusId.all) &&
-                             request.DeveloperId == Developer.all)
-                    {
-                        result = await ticketService.ListAsync(a => a.ProjectId == request.ProjectId &&
-                                                                    a.Priority == request.Priority &&
-                                                                    a.RequestTypeId == request.RequestType &&
-                                                                    (a.InsertDate >= request.StartDateTime
-                                                                    || a.CloseDate > request.StartDateTime) &&
-                                                                    (a.InsertDate <= request.EndDateTime
-                                                                    || a.CloseDate <= request.EndDateTime));
-                    }
-                    else if (request.DeveloperId == Developer.all)
-                    {
-                        result = await ticketService.ListAsync(a => a.ProjectId == request.ProjectId &&
-                                                                    a.Priority == request.Priority &&
-                                                                    a.RequestTypeId == request.RequestType &&
-                                                                    a.StatusId == ((int)request.StatusId) &&
-                                                                    (a.InsertDate >= request.StartDateTime
-                                                                    || a.CloseDate > request.StartDateTime) &&
-                                                                    (a.InsertDate <= request.EndDateTime
-                                                                    || a.CloseDate <= request.EndDateTime));
-                    }
-                    else
-                    {
-                        result = await ticketService.ListAsync(a => a.ProjectId == request.ProjectId &&
-                                                                    a.Priority == request.Priority &&
-                                                                    a.RequestTypeId == request.RequestType &&
-                                                                    a.StatusId == ((int)request.StatusId) &&
-                                                                    a.DeveloperId == request.DeveloperId &&
-                                                                    (a.InsertDate >= request.StartDateTime
-                                                                    || a.CloseDate > request.StartDateTime) &&
-                                                                    (a.InsertDate <= request.EndDateTime
-                                                                    || a.CloseDate <= request.EndDateTime));
-                    }
+                    result = await ticketService.ListAsync(a =>
+                                                          (request.ProjectId == (int)ProjectId.all || a.ProjectId == request.ProjectId) &&
+                                                          (request.Priority == Priority.all || a.Priority == request.Priority) &&
+                                                          (request.RequestType == RequestType.all || a.RequestTypeId == request.RequestType) &&
+                                                          (request.StatusId == (int)StatusId.all || a.StatusId == request.StatusId) &&
+                                                          (request.DeveloperId == Developer.all || a.DeveloperId == request.DeveloperId) &&
+                                                          (a.InsertDate >= request.StartDateTime || a.CloseDate >= request.StartDateTime) &&
+                                                          (a.InsertDate <= request.EndDateTime || a.CloseDate <= request.EndDateTime));
 
                     DateTime NowDate = DateTime.Now;
                     PersianCalendar pc = new PersianCalendar();
