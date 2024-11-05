@@ -3,6 +3,7 @@ namespace Ticketing.Domain.Enums;
 public enum Priority
 {
     high=1,
-    medium,
-    low
+    medium=2,
+    low=3,
+    all=0
 }

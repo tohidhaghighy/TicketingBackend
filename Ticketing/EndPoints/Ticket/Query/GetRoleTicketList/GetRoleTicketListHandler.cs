@@ -47,7 +47,7 @@ public class GetRoleTicketListHandler
                 }
 
                 var persiandate = new System.Globalization.PersianCalendar();
-                var w= result.OrderByDescending(a => a.TicketNumber).ToList().Select(x => new
+                return result.OrderByDescending(a => a.TicketNumber).ToList().Select(x => new
                 {
                     Id = x.Id,
                     TicketRowNumber = x.TicketRowNumber,
@@ -62,9 +62,8 @@ public class GetRoleTicketListHandler
                     CurrentRoleId = x.CurrentRoleId,
                     RequestType = x.RequestTypeId,
                     TicketTime = x.TicketTime ?? "0",
-                    DeveloperId = x.DeveloperId!=0 ? x.DeveloperId:Developer.unknown,
+                    DeveloperId = x.DeveloperId != 0 ? x.DeveloperId : Developer.unknown,
                 });
-                return w;
             }
             catch (Exception ex)
             {
