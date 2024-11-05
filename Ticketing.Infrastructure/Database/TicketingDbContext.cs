@@ -31,6 +31,14 @@ public class TicketingDbContext : DbContext
            {
                Id = 4,
                Name = "سامانه تبادل اطلاعات",
+           }, new Project
+           {
+               Id = 5,
+               Name = "سامانه هوش تجاری",
+           }, new Project
+           {
+               Id = 6,
+               Name = "زیر ساخت",
            }
        );
 

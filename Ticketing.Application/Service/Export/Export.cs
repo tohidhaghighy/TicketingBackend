@@ -64,7 +64,7 @@ public class ExportService : IExport
             currentRow++;
             for (var i = 0; i < d.Length; i++)
             {
-                worksheet.Cell(currentRow, i + 1).Value = (d[i].Text==null?"": d[i].Text.ToString());
+                worksheet.Cell(currentRow, i + 1).Value = (d[i].Text == null ? "" : d[i].Text.ToString());
                 worksheet.Cell(currentRow, i + 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 worksheet.Cell(currentRow, i + 1).Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
                 worksheet.Cell(currentRow, i + 1).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;

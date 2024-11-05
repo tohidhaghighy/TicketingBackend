@@ -1,39 +1,20 @@
-﻿using Carter;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using Ticketing.Domain.Contracts;
-using Ticketing.Domain.Entities;
 using Ticketing.Domain.Enums;
 using Ticketing.EndPoints.Reporting.Query.Export;
+using Ticketing.EndPoints.Reporting.Query.GetReport;
 
 namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
 {
-    public class GetReportQuery : IRequest<FileContentResult>
-    {
-        public string Title { get; set; }
-        public int ProjectId { get; set; }
-        public Priority Priority { get; set; }
-        public RequestType RequestType { get; set; }
-        public int StatusId { get; set; }
-        public Developer DeveloperId { get; set; }
-        public DateTime StartDateTime { get; set; }
-        public DateTime EndDateTime { get; set; }
-    }
-    public class ReportHeaderInfo
-    {
-        public string Title { get; set; }
-        public string startDate { get; set; }
-        public string endDate { get; set; }
-        public string PrintDate { get; set; }
-    }
-    public class GetReport
+    public class GetReportHandler
     {
         public class Handler(ITicketService ticketService,
                             IProjectService projectService,
                             IStatusService statusService,
                             IExport _export,
-                            ILogger<GetReport> _logger) :
+                            ILogger<GetReportHandler> _logger) :
                             IRequestHandler<GetReportQuery, FileContentResult>
         {
             private string statusRturn(int a)
@@ -98,7 +79,6 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                 }
                 return "تعریف نشده";
             }
-            
             public async Task<FileContentResult> Handle(GetReportQuery request, CancellationToken cancellationToken)
             {
                 try
@@ -191,23 +171,6 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
 
                 return null;
             }
-        }
-    }
-    public class DownloadReportModule : ICarterModule
-    {
-        public void AddRoutes(IEndpointRouteBuilder app)
-        {
-            app.MapGet(
-                    "api/v1/downloadReport",
-                    async (IMediator mediator, [AsParameters] GetReportQuery query,
-                        CancellationToken cancellationToken) =>
-                    {
-                        var result = await mediator.Send(query, cancellationToken);
-                        return Results.File(result.FileContents, result.ContentType, result.FileDownloadName);
-                    })
-                .WithOpenApi()
-                .WithTags("Report")
-                .Produces<object[]>();
         }
     }
 }

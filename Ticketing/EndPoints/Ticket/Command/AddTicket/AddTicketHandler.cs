@@ -1,5 +1,6 @@
 using MediatR;
 using Ticketing.Domain.Contracts;
+using Ticketing.Domain.Enums;
 
 namespace Ticketing.EndPoints.Ticket.Command.AddTicket;
 
@@ -55,7 +56,8 @@ public class AddTicketHandler
                         TicketNumber = persiandate.GetYear(DateTime.Now).ToString() +
                                    persiandate.GetMonth(DateTime.Now).ToString() +
                                    persiandate.GetDayOfMonth(DateTime.Now).ToString() +
-                                   rowNumber.Value.ToString("000#")
+                                   rowNumber.Value.ToString("000#"),
+                        DeveloperId=Developer.unknown
                     });
 
                     await ticketFlowService.AddAsync(new Domain.Entities.TicketFlow()
@@ -92,7 +94,8 @@ public class AddTicketHandler
                         TicketNumber = persiandate.GetYear(DateTime.Now).ToString() +
                                    persiandate.GetMonth(DateTime.Now).ToString() +
                                    persiandate.GetDayOfMonth(DateTime.Now).ToString() +
-                                   rowNumber.Value.ToString("000#")
+                                   rowNumber.Value.ToString("000#"),
+                        DeveloperId = Developer.unknown
                     });
 
                     await ticketFlowService.AddAsync(new Domain.Entities.TicketFlow()
