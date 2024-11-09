@@ -6,7 +6,6 @@ namespace Ticketing.EndPoints.Reporting.Query.GetReport
 {
     public class GetReportQuery : IRequest<FileContentResult>
     {
-        public string Title { get; set; }
         public int ProjectId { get; set; }
         public Priority Priority { get; set; }
         public RequestType RequestType { get; set; }
