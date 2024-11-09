@@ -10,7 +10,7 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
         {
             app.MapGet(
                     "api/v1/search",
-                    async (IMediator mediator, [FromBody] GetSearchResultQuery query,
+                    async (IMediator mediator, [AsParameters] GetSearchResultQuery query,
                     CancellationToken cancellationToken) =>
                     {
                         return await mediator.Send(query, cancellationToken);

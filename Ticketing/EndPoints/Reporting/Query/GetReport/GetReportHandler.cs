@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using Ticketing.Domain.Contracts;
 using Ticketing.Domain.Enums;
+using Ticketing.EndPoints.Reporting.Query.Dtos;
 using Ticketing.EndPoints.Reporting.Query.Export;
 using Ticketing.EndPoints.Reporting.Query.GetReport;
 
