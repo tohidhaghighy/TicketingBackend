@@ -2,6 +2,7 @@
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using System.Text;
 using Document = iTextSharp.text.Document;
 using Font = iTextSharp.text.Font;
@@ -92,7 +93,7 @@ public class ExportService : IExport
         return new FileContentResult(
                 content,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-        { FileDownloadName = title + "-" + DateTime.Now.ToString("yyyy-M-d dddd") + ".xlsx" };
+        { FileDownloadName = title + ".xlsx" };
     }
 
     public FileContentResult ToCSV(string title, List<string> header, List<object[]> data)

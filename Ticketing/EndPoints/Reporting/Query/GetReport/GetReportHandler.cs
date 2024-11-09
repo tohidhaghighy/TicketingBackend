@@ -101,14 +101,14 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
 
                     DateTime NowDate = DateTime.Now;
                     PersianCalendar pc = new PersianCalendar();
+                    string title = string.Format("{2}-{1}-{0}", pc.GetDayOfMonth(NowDate) , pc.GetMonth(NowDate), pc.GetYear(NowDate));
 
                     var ReportResultHeader = new ReportHeaderInfo()
                     {
-                        Title = request.Title,
-                        startDate = string.Format("{2}/{1}/{0}", request.StartDateTime.Year, request.StartDateTime.Month,
-                        request.StartDateTime.Day),
-                        endDate = string.Format("{2}/{1}/{0}", request.EndDateTime.Year, request.EndDateTime.Month,
-                        request.EndDateTime.Day),
+                        startDate = string.Format("{2}/{1}/{0}", pc.GetYear(request.StartDateTime), pc.GetMonth(request.StartDateTime), pc.GetDayOfMonth(request.StartDateTime)),
+
+                        endDate = string.Format("{2}/{1}/{0}", pc.GetYear(request.EndDateTime) , pc.GetMonth(request.EndDateTime), pc.GetDayOfMonth(request.EndDateTime)),
+
                         PrintDate = string.Format("{2}/{1}/{0} {3}:{4}", pc.GetYear(NowDate), pc.GetMonth(NowDate),
                         pc.GetDayOfMonth(NowDate), pc.GetHour(NowDate), pc.GetMinute(NowDate)),
                     };
@@ -143,7 +143,7 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         new CellInfo() {Text = (x.TicketTime==null?"0":x.TicketTime) ,DynamicWidth=false}
                     }).ToList();
 
-                    return _export.ToExcel(request.Title, headerInfoxslx, new List<ExcelDataType>
+                    return _export.ToExcel(title, headerInfoxslx, new List<ExcelDataType>
                     {
                         ExcelDataType.Text,
                         ExcelDataType.Text,
@@ -158,7 +158,6 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         ExcelDataType.Text,
                     }, CreatedList, footersum, headerInfo: new List<string>
                     {
-                        "عنوان : " + ReportResultHeader.Title,
                         "از تاریخ :" + ReportResultHeader.startDate,
                         "تا تاریخ :" + ReportResultHeader.endDate,
                         "تاریخ چاپ گزارش :" + ReportResultHeader.PrintDate,
