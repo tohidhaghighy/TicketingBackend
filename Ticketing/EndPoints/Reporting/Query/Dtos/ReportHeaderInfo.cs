@@ -1,4 +1,4 @@
-﻿namespace Ticketing.EndPoints.Reporting.Query.GetReport
+﻿namespace Ticketing.EndPoints.Reporting.Query.Dtos
 {
     public class ReportHeaderInfo
     {
