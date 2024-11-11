@@ -1,6 +1,5 @@
 ﻿using Carter;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Ticketing.EndPoints.Search.Query.GetSearchResult
 {

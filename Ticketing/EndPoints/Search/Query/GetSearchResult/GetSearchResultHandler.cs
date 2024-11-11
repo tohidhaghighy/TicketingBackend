@@ -19,20 +19,19 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                     request.EndDateTime = request.EndDateTime.AddHours(23);// Explanations in the bottom line
                     request.EndDateTime = request.EndDateTime.AddMinutes(59); // to set the end day time to 11:59 p.m
                     result = await ticketService.ListAsync(a =>
-                                                          (request.TicketNumber==null || a.TicketNumber == request.TicketNumber) &&
-                                                          (request.Title == null || a.Title.Contains(request.Title)) &&
+                                                          (request.TicketNumber == "" || a.TicketNumber == request.TicketNumber) &&
+                                                          (request.Title == "" || a.Title.Contains(request.Title)) &&
                                                           (request.InsertedRoleId == (int)Role.all || a.InsertedRoleId == request.InsertedRoleId) &&
-                                                          (request.Username == null || a.Username.Contains(request.Username)) &&
+                                                          (request.Username == "" || a.Username.Contains(request.Username)) &&
                                                           (request.CurrentRoleId == (int)Role.all || a.CurrentRoleId == request.CurrentRoleId) &&
                                                           (request.StatusId == (int)StatusId.all || a.StatusId == request.StatusId) &&
                                                           (request.ProjectId == (int)ProjectId.all || a.ProjectId == request.ProjectId) &&
-                                                          (request.RequestType == RequestType.all || a.RequestTypeId == request.RequestType) &&
-                                                          (request.DeveloperId == Developer.all || a.DeveloperId == request.DeveloperId) &&
-                                                          (a.InsertDate >= request.StartDateTime || a.CloseDate >= request.StartDateTime) &&
-                                                          (a.InsertDate <= request.EndDateTime || a.CloseDate <= request.EndDateTime));
+                                                          (request.RequestType == (int)RequestType.all || a.RequestTypeId == request.RequestType) &&
+                                                          (request.DeveloperId == (int)Developer.all || a.DeveloperId == request.DeveloperId) &&
+                                                          (a.InsertDate.Date >= request.StartDateTime && a.InsertDate.Date <= request.EndDateTime));
 
                     var persiandate = new System.Globalization.PersianCalendar();
-                    return result.OrderByDescending(a => a.TicketNumber).ToList().Select(x => new
+                    return result.OrderByDescending(a => a.TicketRowNumber).ToList().Select(x => new
                     {
                         Id = x.Id,
                         TicketRowNumber = x.TicketRowNumber,

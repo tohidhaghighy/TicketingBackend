@@ -6,10 +6,10 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
 {
     public class GetSearchResultQuery : IRequest<object>
     {
-        public string TicketNumber { get; set; }  //شماره تیکت null
-        public string Title { get; set; }  //متن تیکت null
+        public string TicketNumber { get; set; } = "";  //شماره تیکت null
+        public string Title { get; set; } = "";  //متن تیکت null
         public int InsertedRoleId { get; set; }  //رول شخص ثبت کننده Role.all == 0
-        public string Username { get; set; }  //اسم شخص ثبت کننده
+        public string Username { get; set; } = "";  //اسم شخص ثبت کننده
         public int CurrentRoleId { get; set; }  //تیکت الان دست کدوم رول هستش
         public int StatusId { get; set; }  //وضعیت تیکت
         public int ProjectId { get; set; }  //آیدی سامانه
