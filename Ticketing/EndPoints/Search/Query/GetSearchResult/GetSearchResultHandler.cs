@@ -28,7 +28,7 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                                                           (request.ProjectId == (int)ProjectId.all || a.ProjectId == request.ProjectId) &&
                                                           (request.RequestType == (int)RequestType.all || a.RequestTypeId == request.RequestType) &&
                                                           (request.DeveloperId == (int)Developer.all || a.DeveloperId == request.DeveloperId) &&
-                                                          (a.InsertDate.Date >= request.StartDateTime && a.InsertDate.Date <= request.EndDateTime));
+                                                          (a.InsertDate >= request.StartDateTime && a.InsertDate <= request.EndDateTime));
 
                     var persiandate = new System.Globalization.PersianCalendar();
                     return result.OrderByDescending(a => a.TicketRowNumber).ToList().Select(x => new

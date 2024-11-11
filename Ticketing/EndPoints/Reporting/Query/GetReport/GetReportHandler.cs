@@ -97,8 +97,7 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                                                           (request.RequestType == RequestType.all || a.RequestTypeId == request.RequestType) &&
                                                           (request.StatusId == (int)StatusId.all || a.StatusId == request.StatusId) &&
                                                           (request.DeveloperId == Developer.all || a.DeveloperId == request.DeveloperId) &&
-                                                          (a.InsertDate >= request.StartDateTime || a.CloseDate >= request.StartDateTime) &&
-                                                          (a.InsertDate <= request.EndDateTime || a.CloseDate <= request.EndDateTime));
+                                                          (a.InsertDate >= request.StartDateTime && a.InsertDate <= request.EndDateTime));
 
                     DateTime NowDate = DateTime.Now;
                     PersianCalendar pc = new PersianCalendar();
