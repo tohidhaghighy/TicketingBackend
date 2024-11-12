@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using Ticketing.Domain.Contracts;
 using Ticketing.Domain.Enums;
+using Ticketing.EndPoints.Reporting.Query.Dtos;
 using Ticketing.EndPoints.Reporting.Query.Export;
 using Ticketing.EndPoints.Reporting.Query.GetReport;
 
@@ -37,6 +38,8 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         return "در صف انجام پردازش";
                     case 8:
                         return "درحال انجام";
+                    case 9:
+                        return "رد شده در انتظار تایید";
                 }
                 return "تعریف نشده";
             }
@@ -96,8 +99,7 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                                                           (request.RequestType == RequestType.all || a.RequestTypeId == request.RequestType) &&
                                                           (request.StatusId == (int)StatusId.all || a.StatusId == request.StatusId) &&
                                                           (request.DeveloperId == Developer.all || a.DeveloperId == request.DeveloperId) &&
-                                                          (a.InsertDate >= request.StartDateTime || a.CloseDate >= request.StartDateTime) &&
-                                                          (a.InsertDate <= request.EndDateTime || a.CloseDate <= request.EndDateTime));
+                                                          (a.InsertDate >= request.StartDateTime && a.InsertDate <= request.EndDateTime));
 
                     DateTime NowDate = DateTime.Now;
                     PersianCalendar pc = new PersianCalendar();

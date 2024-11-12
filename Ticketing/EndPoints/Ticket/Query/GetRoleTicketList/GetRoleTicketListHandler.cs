@@ -59,6 +59,7 @@ public class GetRoleTicketListHandler
                     Date = persiandate.GetYear(x.InsertDate) + "/" + persiandate.GetMonth(x.InsertDate) + "/" + persiandate.GetDayOfMonth(x.InsertDate),
                     Project = listProject.FirstOrDefault(a => a.Id == x.ProjectId).Name,
                     Priority = x.Priority,
+                    InsertedRoleId = x.InsertedRoleId,
                     CurrentRoleId = x.CurrentRoleId,
                     RequestType = x.RequestTypeId,
                     TicketTime = x.TicketTime ?? "0",
