@@ -38,6 +38,8 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         return "در صف انجام پردازش";
                     case 8:
                         return "درحال انجام";
+                    case 9:
+                        return "رد شده در انتظار تایید";
                 }
                 return "تعریف نشده";
             }
