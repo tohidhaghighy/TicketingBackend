@@ -55,6 +55,10 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         return "سامانه امحا";
                     case 4:
                         return "سامانه تبادل اطلاعات";
+                    case 5:
+                        return "سامانه هوش تجاری";
+                    case 6:
+                        return "زیر ساخت";
                 }
                 return "تعریف نشده";
             }
