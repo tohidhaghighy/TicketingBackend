@@ -128,21 +128,32 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         "وضعیت تیکت",
                         "انجام دهنده",
                         "ساعت صرف شده",
+                        "تاریخ و ساعت تحویل تیکت"
                     };
 
                     var CreatedList = result.Select((x, r) => new[]
                     {
                         new CellInfo() {Text = (r + 1).ToString() },
-                        new CellInfo() {Text = x.TicketNumber ,DynamicWidth=false},
-                        new CellInfo() {Text = x.Username ,DynamicWidth=false},
-                        new CellInfo() {Text = new PersianCalendar().GetYear(x.InsertDate) + "/" + new PersianCalendar().GetMonth(x.InsertDate).ToString("D2") + "/" + new PersianCalendar().GetDayOfMonth(x.InsertDate).ToString("D2") ,DynamicWidth=false},
-                        new CellInfo() {Text = requestRturn(x.RequestTypeId) ,DynamicWidth=false},
-                        new CellInfo() {Text = priorityRturn(x.Priority) ,DynamicWidth=false},
-                        new CellInfo() {Text = x.Title ,DynamicWidth=false},
-                        new CellInfo() {Text = projectRturn(x.ProjectId) ,DynamicWidth=false}, //x.ProjectId.ToString()
-                        new CellInfo() {Text = statusRturn(x.StatusId) ,DynamicWidth=false},
-                        new CellInfo() {Text = x.DeveloperId.ToString() ,DynamicWidth=false},
-                        new CellInfo() {Text = (x.TicketTime==null?"0":x.TicketTime) ,DynamicWidth=false}
+                        new CellInfo() {Text = x.TicketNumber ,DynamicWidth=true},
+                        new CellInfo() {Text = x.Username ,DynamicWidth=true},
+                        new CellInfo() {Text = new PersianCalendar().GetYear(x.InsertDate).ToString("D2") + "/" + 
+                                               new PersianCalendar().GetMonth(x.InsertDate).ToString("D2") + "/" + 
+                                               new PersianCalendar().GetDayOfMonth(x.InsertDate).ToString("D2") 
+                                               ,DynamicWidth=true},
+                        new CellInfo() {Text = requestRturn(x.RequestTypeId) ,DynamicWidth=true},
+                        new CellInfo() {Text = priorityRturn(x.Priority) ,DynamicWidth=true},
+                        new CellInfo() {Text = x.Title ,DynamicWidth=true},
+                        new CellInfo() {Text = projectRturn(x.ProjectId) ,DynamicWidth=true}, //x.ProjectId.ToString()
+                        new CellInfo() {Text = statusRturn(x.StatusId) ,DynamicWidth=true},
+                        new CellInfo() {Text = x.DeveloperId.ToString() ,DynamicWidth=true},
+                        new CellInfo() {Text = (x.TicketTime==null?"0":x.TicketTime) ,DynamicWidth=true},
+                        new CellInfo() {Text = x.ProcessEndDateTime == DateTime.MinValue?"ثبت نشده":
+                                               new PersianCalendar().GetYear(x.ProcessEndDateTime).ToString("D2") + "/" +
+                                               new PersianCalendar().GetMonth(x.ProcessEndDateTime).ToString("D2") + "/" + 
+                                               new PersianCalendar().GetDayOfMonth(x.ProcessEndDateTime).ToString("D2") + "  " + 
+                                               new PersianCalendar().GetHour(x.ProcessEndDateTime).ToString("D2") + ":" +
+                                               new PersianCalendar().GetMinute(x.ProcessEndDateTime).ToString("D2")
+                                               ,DynamicWidth=true},
                     }).ToList();
 
                     return _export.ToExcel(title, headerInfoxslx, new List<ExcelDataType>
