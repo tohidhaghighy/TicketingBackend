@@ -3,7 +3,6 @@
     public enum Role
     {
         adminTaz = 4,
-        adminVira = 5,
-        all=0
+        adminVira = 5
     }
 }

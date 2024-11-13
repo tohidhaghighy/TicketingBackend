@@ -39,7 +39,6 @@ public class GetRoleTicketInfoHandler
                     awaitingConfirmation = listtickets.Where(a => a.StatusId == 6).Count(),
                     inLine = listtickets.Where(a => a.StatusId == 7).Count(),
                     inProgress = inProgresCount,
-                    awaitingRejecting = listtickets.Where(a => a.StatusId == 9).Count(),
                     total = listtickets.Count()
                 };
             }

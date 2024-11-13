@@ -93,16 +93,6 @@ namespace Ticketing.Infrastructure.Migrations
                         {
                             Id = 4,
                             Name = "سامانه تبادل اطلاعات"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "سامانه هوش تجاری"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "زیر ساخت"
                         });
                 });
 
@@ -207,11 +197,6 @@ namespace Ticketing.Infrastructure.Migrations
                         {
                             Id = 8,
                             Name = "در حال انجام"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Name = "رد شده در انتظار تایید"
                         });
                 });
 
@@ -250,9 +235,6 @@ namespace Ticketing.Infrastructure.Migrations
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("ProcessEndDateTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
