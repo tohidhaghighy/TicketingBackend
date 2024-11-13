@@ -29,7 +29,7 @@ public class GetTicketMassageListHandler
                         StatusId = ticketinfo.StatusId,
                         Status = liststatus.FirstOrDefault(a => a.Id == ticketinfo.StatusId).Name,
                         Username = ticketinfo.Username,
-                        Date = p.GetHour(ticketinfo.InsertDate) + ":" + (p.GetMinute(ticketinfo.InsertDate)<10 ? ("0"+p.GetMinute(ticketinfo.InsertDate)) : p.GetMinute(ticketinfo.InsertDate)) + " - " + p.GetYear(ticketinfo.InsertDate) + "/" + p.GetMonth(ticketinfo.InsertDate) + "/" + p.GetDayOfMonth(ticketinfo.InsertDate), // 2024/01/01 19:4 -> 2024/01/01 19:04
+                        Date = p.GetYear(ticketinfo.InsertDate) + "/" + p.GetMonth(ticketinfo.InsertDate) + "/" + p.GetDayOfMonth(ticketinfo.InsertDate),
                         Project = listprojects.FirstOrDefault(a => a.Id == ticketinfo.ProjectId).Name,
                         ProjectId = listprojects.FirstOrDefault(a => a.Id == ticketinfo.ProjectId).Id,
                         Priority = ticketinfo.Priority,
@@ -46,7 +46,7 @@ public class GetTicketMassageListHandler
                         Text = x.Text,
                         Username = x.Username,
                         UserId = x.UserId,
-                        Date = p.GetHour(x.InsertDate) + ":" + (p.GetMinute(x.InsertDate)<10 ? ("0"+p.GetMinute(x.InsertDate)) : p.GetMinute(x.InsertDate)) + " - " + p.GetYear(x.InsertDate) + "/" + p.GetMonth(x.InsertDate) + "/" + p.GetDayOfMonth(x.InsertDate), // 2024/01/01 19:4 -> 2024/01/01 19:04
+                        Date = p.GetYear(x.InsertDate) + "/" + p.GetMonth(x.InsertDate) + "/" + p.GetDayOfMonth(x.InsertDate),
                         FilePath = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}" + "/Files/" + ticketinfo.FilePath,
                         HaveFile = !string.IsNullOrWhiteSpace(x.FilePath)
                     })

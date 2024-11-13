@@ -1,6 +1,7 @@
 ﻿using Carter;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Ticketing.EndPoints.Ticket.Command.ChangeStatus;
 
 namespace Ticketing.EndPoints.Ticket.Command.ChangeDevelopedBy
 {

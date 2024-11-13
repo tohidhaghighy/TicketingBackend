@@ -7,7 +7,6 @@ using Ticketing.Application.Service.Stauts;
 using Ticketing.Application.Service.Ticket;
 using Ticketing.Application.Service.TicketFlow;
 using Ticketing.Domain.Contracts;
-using Ticketing.EndPoints.Reporting.Query.Export;
 using Ticketing.Infrastructure.Database;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,7 +33,6 @@ builder.Services.AddScoped<IProjectRoleService, ProjectRoleService>();
 builder.Services.AddScoped<IMassageService, MassageService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketFlowService, TicketFlowService>();
-builder.Services.AddSingleton<IExport, ExportService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddLogging(loggingBuilder =>
 {

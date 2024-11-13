@@ -24,5 +24,4 @@ public class Ticket : BaseEntity<int>
     public DateTime? LastChangeDatetime { get; set; }
     public string? TicketTime { get; set; }
     public Developer DeveloperId { get; set; }
-    public DateTime ProcessEndDateTime { get; set; }
 }

@@ -41,7 +41,6 @@ public class GetYearTickerInfoHandler
                     int awaitingConfirmation = result.Where(a => p.GetMonth(a.InsertDate) == i && a.StatusId == 6).Count();
                     int inLine = result.Where(a => p.GetMonth(a.InsertDate) == i && a.StatusId == 7).Count();
                     int inProgress = result.Where(a => p.GetMonth(a.InsertDate) == i && a.StatusId == 8).Count();
-                    int awaitingRejecting = result.Where(a => p.GetMonth(a.InsertDate) == i && a.StatusId == 9).Count();
                     resultyear.Add(new MonthTicketItem() {
                         Month = GetMonth(i),
                         Value = done+inserted+sendtovira+reject+sendtotaz+awaitingConfirmation+inLine+inProgress,
