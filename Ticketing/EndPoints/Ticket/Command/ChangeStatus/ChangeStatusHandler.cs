@@ -1,5 +1,6 @@
 using MediatR;
 using Ticketing.Domain.Contracts;
+using Ticketing.Domain.Enums;
 
 namespace Ticketing.EndPoints.Ticket.Command.ChangeStatus;
 
@@ -12,7 +13,22 @@ public class ChangeStatusHandler
             try
             {
                 var findticket = await ticketService.GetAsync(a => a.Id == request.TicketId);
-                findticket.StatusId = request.Status;
+                if (request.Status == (int)StatusId.awaitingConfirmation)
+                {
+                    if (findticket.ProcessEndDateTime == DateTime.MinValue)
+                    {
+                        findticket.ProcessEndDateTime = DateTime.Now;
+                        findticket.StatusId = request.Status;
+                    }
+                    else
+                    {
+                        findticket.StatusId = request.Status;
+                    }
+                }
+                else
+                {
+                    findticket.StatusId = request.Status;
+                }
                 await ticketFlowService.AddAsync(new Domain.Entities.TicketFlow()
                 {
                     CurrentRoleId = findticket.InsertedRoleId,

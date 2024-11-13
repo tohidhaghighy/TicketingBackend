@@ -1,5 +1,6 @@
 using MediatR;
 using Ticketing.Domain.Contracts;
+using Ticketing.Domain.Enums;
 
 namespace Ticketing.EndPoints.Ticket.Command.AddTicket;
 
@@ -32,41 +33,83 @@ public class AddTicketHandler
                 var persiandate = new System.Globalization.PersianCalendar();
                 var getlastticket = await ticketService.ListAsync(null);
                 var rowNumber= (getlastticket.Count() == 0 ? 1 : getlastticket.Last().TicketRowNumber + 1);
-                
-                var result = await ticketService.AddAsync(new Domain.Entities.Ticket()
+
+                if (request.RoleId == 4) //if admin tazirat add new ticket, automaticly new ticket send to vira admin and dont need manually chang status in new tickets
                 {
-                    CurrentRoleId = 4,//admin taz
-                    InsertedRoleId = request.RoleId,
-                    Text = request.Text,
-                    Title = request.Title,
-                    Priority = request.Priority,
-                    UserId = request.UserId,
-                    RequestTypeId = request.RequestType,
-                    StatusId = 2,// new ticket
-                    CloseDate = DateTime.Now,
-                    InsertDate = DateTime.Now,
-                    ProjectId = request.ProjectId,
-                    FilePath = fileName,
-                    Username = request.Username,
-                    LastChangeDatetime = null,
-                    TicketRowNumber = rowNumber,
-                    TicketNumber = persiandate.GetYear(DateTime.Now).ToString()+
-                                   persiandate.GetMonth(DateTime.Now).ToString()+
-                                   persiandate.GetDayOfMonth(DateTime.Now).ToString()+
-                                   rowNumber.Value.ToString("000#")
-                });
-                
-                await ticketFlowService.AddAsync(new Domain.Entities.TicketFlow()
+                    var result = await ticketService.AddAsync(new Domain.Entities.Ticket()
+                    {
+                        CurrentRoleId = 5,//admin vira
+                        InsertedRoleId = request.RoleId,
+                        Text = request.Text,
+                        Title = request.Title,
+                        Priority = request.Priority,
+                        UserId = request.UserId,
+                        RequestTypeId = request.RequestType,
+                        StatusId = 3,// Send to vira
+                        CloseDate = DateTime.Now,
+                        InsertDate = DateTime.Now,
+                        ProjectId = request.ProjectId,
+                        FilePath = fileName,
+                        Username = request.Username,
+                        LastChangeDatetime = null,
+                        TicketRowNumber = rowNumber,
+                        TicketNumber = persiandate.GetYear(DateTime.Now).ToString() +
+                                   persiandate.GetMonth(DateTime.Now).ToString() +
+                                   persiandate.GetDayOfMonth(DateTime.Now).ToString() +
+                                   rowNumber.Value.ToString("000#"),
+                        DeveloperId=Developer.unknown
+                    });
+
+                    await ticketFlowService.AddAsync(new Domain.Entities.TicketFlow()
+                    {
+                        CurrentRoleId = 5,
+                        InsertDate = DateTime.Now,
+                        StatusId = 3,
+                        UserId = request.UserId,
+                        Username = request.Username,
+                        TicketId = result.Id,
+                        PreviousRoleId = request.RoleId
+                    });
+                    return result;
+                }
+                else
                 {
-                    CurrentRoleId = 4,
-                    InsertDate = DateTime.Now,
-                    StatusId = 2,
-                    UserId = request.UserId,
-                    Username = request.Username,
-                    TicketId = result.Id,
-                    PreviousRoleId = request.RoleId
-                });
-                return result;
+                    var result = await ticketService.AddAsync(new Domain.Entities.Ticket()
+                    {
+                        CurrentRoleId = 4,//admin taz
+                        InsertedRoleId = request.RoleId,
+                        Text = request.Text,
+                        Title = request.Title,
+                        Priority = request.Priority,
+                        UserId = request.UserId,
+                        RequestTypeId = request.RequestType,
+                        StatusId = 2,// new ticket
+                        CloseDate = DateTime.Now,
+                        InsertDate = DateTime.Now,
+                        ProjectId = request.ProjectId,
+                        FilePath = fileName,
+                        Username = request.Username,
+                        LastChangeDatetime = null,
+                        TicketRowNumber = rowNumber,
+                        TicketNumber = persiandate.GetYear(DateTime.Now).ToString() +
+                                   persiandate.GetMonth(DateTime.Now).ToString() +
+                                   persiandate.GetDayOfMonth(DateTime.Now).ToString() +
+                                   rowNumber.Value.ToString("000#"),
+                        DeveloperId = Developer.unknown
+                    });
+
+                    await ticketFlowService.AddAsync(new Domain.Entities.TicketFlow()
+                    {
+                        CurrentRoleId = 4,
+                        InsertDate = DateTime.Now,
+                        StatusId = 2,
+                        UserId = request.UserId,
+                        Username = request.Username,
+                        TicketId = result.Id,
+                        PreviousRoleId = request.RoleId
+                    });
+                    return result;
+                }
             }
             catch (Exception ex)
             {

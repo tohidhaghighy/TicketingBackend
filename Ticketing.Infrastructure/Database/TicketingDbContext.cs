@@ -31,6 +31,14 @@ public class TicketingDbContext : DbContext
            {
                Id = 4,
                Name = "سامانه تبادل اطلاعات",
+           }, new Project
+           {
+               Id = 5,
+               Name = "سامانه هوش تجاری",
+           }, new Project
+           {
+               Id = 6,
+               Name = "زیر ساخت",
            }
        );
 
@@ -91,6 +99,10 @@ public class TicketingDbContext : DbContext
           {
               Id = 8,
               Name = "در حال انجام"
+          }, new Status
+          {
+              Id = 9,
+              Name = "رد شده در انتظار تایید"
           }
       );
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProjectEntityTypeConfiguration).Assembly);
