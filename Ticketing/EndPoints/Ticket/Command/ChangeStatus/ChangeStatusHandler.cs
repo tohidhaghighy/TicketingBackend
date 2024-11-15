@@ -15,7 +15,7 @@ public class ChangeStatusHandler
                 var findticket = await ticketService.GetAsync(a => a.Id == request.TicketId);
                 if (request.Status == (int)StatusId.awaitingConfirmation)
                 {
-                    if (findticket.ProcessEndDateTime == DateTime.MinValue)
+                    if (findticket.ProcessEndDateTime == null)
                     {
                         findticket.ProcessEndDateTime = DateTime.Now;
                         findticket.StatusId = request.Status;
