@@ -151,12 +151,12 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         new CellInfo() {Text = statusRturn(x.StatusId) ,DynamicWidth=true},
                         new CellInfo() {Text = x.DeveloperId.ToString() ,DynamicWidth=true},
                         new CellInfo() {Text = (x.TicketTime==null?"0":x.TicketTime) ,DynamicWidth=true},
-                        new CellInfo() {Text = x.ProcessEndDateTime == DateTime.MinValue?"ثبت نشده":
-                                               new PersianCalendar().GetYear(x.ProcessEndDateTime).ToString("D2") + "/" +
-                                               new PersianCalendar().GetMonth(x.ProcessEndDateTime).ToString("D2") + "/" + 
-                                               new PersianCalendar().GetDayOfMonth(x.ProcessEndDateTime).ToString("D2") + "  " + 
-                                               new PersianCalendar().GetHour(x.ProcessEndDateTime).ToString("D2") + ":" +
-                                               new PersianCalendar().GetMinute(x.ProcessEndDateTime).ToString("D2")
+                        new CellInfo() {Text = x.ProcessEndDateTime == null?"ثبت نشده":
+                                               new PersianCalendar().GetYear((DateTime)x.ProcessEndDateTime).ToString("D2") + "/" +
+                                               new PersianCalendar().GetMonth((DateTime)x.ProcessEndDateTime).ToString("D2") + "/" + 
+                                               new PersianCalendar().GetDayOfMonth((DateTime)x.ProcessEndDateTime).ToString("D2") + "  " + 
+                                               new PersianCalendar().GetHour((DateTime)x.ProcessEndDateTime).ToString("D2") + ":" +
+                                               new PersianCalendar().GetMinute((DateTime)x.ProcessEndDateTime).ToString("D2")
                                                ,DynamicWidth=true},
                     }).ToList();
 
