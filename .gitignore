@@ -42,4 +42,3 @@ msbuild.log
 msbuild.err
 msbuild.wrn
 /Ticketing/Files
-/Ticketing/appsettings.json
