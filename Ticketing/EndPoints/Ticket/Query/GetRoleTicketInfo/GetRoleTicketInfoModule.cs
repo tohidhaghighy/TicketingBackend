@@ -1,6 +1,5 @@
 using Carter;
 using MediatR;
-using Ticketing.EndPoints.Ticket.Query.GetGroupTicketList;
 
 namespace Ticketing.EndPoints.Ticket.Query.GetGroupTicketInfo;
 

@@ -15,7 +15,7 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
         public int ProjectId { get; set; }  //آیدی سامانه
         public RequestType RequestType { get; set; }  //نوع درخواست
         public Developer DeveloperId { get; set; }  //انجام دهنده
-        public DateTime StartDateTime { get; set; }
-        public DateTime EndDateTime { get; set; }
+        public Nullable<DateTime> StartDateTime { get; set; }
+        public Nullable<DateTime> EndDateTime { get; set; }
     }
 }
