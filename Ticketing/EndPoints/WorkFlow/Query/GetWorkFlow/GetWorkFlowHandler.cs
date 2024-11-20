@@ -18,7 +18,7 @@ namespace Ticketing.EndPoints.WorkFlow.Query.GetWorkFlow
                     var liststatus = await statusService.ListAsync(null);
 
                     var p = new PersianCalendar();
-                    return ticketFlowList.OrderByDescending(a => a.InsertDate).Select(x => new
+                    return ticketFlowList.OrderBy(a => a.InsertDate).Select(x => new
                     {
                         flowId = x.Id,
                         ticketId = x.TicketId,
