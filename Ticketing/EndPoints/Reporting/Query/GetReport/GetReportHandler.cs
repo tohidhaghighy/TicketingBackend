@@ -119,8 +119,8 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                     string title = string.Format("{2}-{1}-{0}", pc.GetDayOfMonth(NowDate) , pc.GetMonth(NowDate), pc.GetYear(NowDate));
 
                     #region Handel null start and end date
-                    string start = "تایین نشده";
-                    string end = "تایین نشده";
+                    string start = "تعیین نشده";
+                    string end = "تعیین نشده";
                     if (request.StartDateTime != null)
                     {
                         start = string.Format("{2}/{1}/{0}", pc.GetYear((DateTime)request.StartDateTime), pc.GetMonth((DateTime)request.StartDateTime), pc.GetDayOfMonth((DateTime)request.StartDateTime));
