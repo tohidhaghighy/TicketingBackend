@@ -16,13 +16,13 @@ public class GetRoleTicketListHandler
                 var listProject = await projectService.ListAsync(null);
                 if (request.RoleId == (int)Role.adminTaz)
                 {
-                    result = await ticketService.ListAsync(a => (a.StatusId == request.Status));
+                    result = await ticketService.ListAsync(a => (a.StatusId == request.Status && (int)a.RequestTypeId == request.RequestTypeId));
                 }
                 else if (request.RoleId == (int)Role.adminVira)
                 {
                     if (request.Status != 2)
                     {
-                        result = await ticketService.ListAsync(a => (a.StatusId == request.Status));
+                        result = await ticketService.ListAsync(a => (a.StatusId == request.Status && (int)a.RequestTypeId == request.RequestTypeId));
                     }
                 }
                 else
@@ -33,7 +33,8 @@ public class GetRoleTicketListHandler
                         result = await ticketService.ListAsync(a => (a.CurrentRoleId == request.RoleId &&
                                                                                         (a.StatusId != 1 && a.StatusId != 2 && a.StatusId != 4)) ||
                                                                                         (a.UserId == request.UserId &&
-                                                                                        (a.StatusId != 1 && a.StatusId != 2 && a.StatusId != 4)));
+                                                                                        (a.StatusId != 1 && a.StatusId != 2 && a.StatusId != 4)) &&
+                                                                                        (int)a.RequestTypeId == request.RequestTypeId);
                     }
                     else
                     {
@@ -41,7 +42,8 @@ public class GetRoleTicketListHandler
                         result = await ticketService.ListAsync(a => (a.CurrentRoleId == request.RoleId &&
                                                                                         a.StatusId == request.Status) ||
                                                                                         (a.UserId == request.UserId &&
-                                                                                        a.StatusId == request.Status));
+                                                                                        a.StatusId == request.Status) &&
+                                                                                        (int)a.RequestTypeId == request.RequestTypeId);
 
                     }
                 }
