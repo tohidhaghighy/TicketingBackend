@@ -13,6 +13,17 @@ public class ChangeRoleHandler
             {
                 var listRoles = await projectRoleService.ListAsync(null);
                 var findticket = await ticketService.GetAsync(a => a.Id == request.TicketId);
+                
+                if (findticket.CurrentRoleId==5 && request.RoleId==4)
+                {
+                    findticket.LastChangeDatetime = DateTime.Now;
+                    findticket.StatusId = 5;
+                }
+                else
+                {
+                    findticket.StatusId = 3;
+                }
+
                 await ticketFlowService.AddAsync(new Domain.Entities.TicketFlow()
                 {
                     CurrentRoleId = request.RoleId,
@@ -23,15 +34,7 @@ public class ChangeRoleHandler
                     TicketId = findticket.Id,
                     PreviousRoleId = findticket.CurrentRoleId
                 });
-                if (findticket.CurrentRoleId==5 && request.RoleId==4)
-                {
-                    findticket.LastChangeDatetime = DateTime.Now;
-                    findticket.StatusId = 5;
-                }
-                else
-                {
-                    findticket.StatusId = 3;
-                }
+
                 findticket.CurrentRoleId = request.RoleId;
                 
                 return await ticketService.UpdateAsync(findticket);

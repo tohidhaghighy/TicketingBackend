@@ -94,26 +94,48 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                     var liststatus = await statusService.ListAsync(null);
                     var listProject = await projectService.ListAsync(null);
                     var footersum = new List<string>(); // For foter sum colum (Empty in this code)
-                    request.EndDateTime = request.EndDateTime.AddHours(23);// Explanations in the bottom line
-                    request.EndDateTime = request.EndDateTime.AddMinutes(59); // to set the end day time to 11:59 p.m
-
+                    
                     result = await ticketService.ListAsync(a =>
                                                           (request.ProjectId == (int)ProjectId.all || a.ProjectId == request.ProjectId) &&
                                                           (request.Priority == Priority.all || a.Priority == request.Priority) &&
                                                           (request.RequestType == RequestType.all || a.RequestTypeId == request.RequestType) &&
                                                           (request.StatusId == (int)StatusId.all || a.StatusId == request.StatusId) &&
-                                                          (request.DeveloperId == Developer.all || a.DeveloperId == request.DeveloperId) &&
-                                                          (a.InsertDate >= request.StartDateTime && a.InsertDate <= request.EndDateTime));
+                                                          (request.DeveloperId == Developer.all || a.DeveloperId == request.DeveloperId));
+                    if (request.StartDateTime != null)
+                    {
+                        result = result.Where(a => (
+                                              request.StartDateTime == DateTime.MinValue || a.InsertDate >= request.StartDateTime)).ToList();
+                    }
+                    if (request.EndDateTime != null)
+                    {
+                        request.EndDateTime = request.EndDateTime?.AddHours(23);// Explanations in the bottom line
+                        request.EndDateTime = request.EndDateTime?.AddMinutes(59); // to set the end day time to 11:59 p.m
+                        result = result.Where(a => (
+                                              request.EndDateTime == DateTime.MinValue || a.InsertDate <= request.EndDateTime)).ToList();
+                    }
 
                     DateTime NowDate = DateTime.Now;
                     PersianCalendar pc = new PersianCalendar();
                     string title = string.Format("{2}-{1}-{0}", pc.GetDayOfMonth(NowDate) , pc.GetMonth(NowDate), pc.GetYear(NowDate));
 
+                    #region Handel null start and end date
+                    string start = "تعیین نشده";
+                    string end = "تعیین نشده";
+                    if (request.StartDateTime != null)
+                    {
+                        start = string.Format("{2}/{1}/{0}", pc.GetYear((DateTime)request.StartDateTime), pc.GetMonth((DateTime)request.StartDateTime), pc.GetDayOfMonth((DateTime)request.StartDateTime));
+                    }
+                    if(request.EndDateTime != null)
+                    {
+                        end = string.Format("{2}/{1}/{0}", pc.GetYear((DateTime)request.EndDateTime), pc.GetMonth((DateTime)request.EndDateTime), pc.GetDayOfMonth((DateTime)request.EndDateTime));
+                    }
+                    #endregion
+
                     var ReportResultHeader = new ReportHeaderInfo()
                     {
-                        startDate = string.Format("{2}/{1}/{0}", pc.GetYear(request.StartDateTime), pc.GetMonth(request.StartDateTime), pc.GetDayOfMonth(request.StartDateTime)),
+                        startDate = start,
 
-                        endDate = string.Format("{2}/{1}/{0}", pc.GetYear(request.EndDateTime) , pc.GetMonth(request.EndDateTime), pc.GetDayOfMonth(request.EndDateTime)),
+                        endDate = end,
 
                         PrintDate = string.Format("{2}/{1}/{0} {3}:{4}", pc.GetYear(NowDate), pc.GetMonth(NowDate),
                         pc.GetDayOfMonth(NowDate), pc.GetHour(NowDate), pc.GetMinute(NowDate)),
