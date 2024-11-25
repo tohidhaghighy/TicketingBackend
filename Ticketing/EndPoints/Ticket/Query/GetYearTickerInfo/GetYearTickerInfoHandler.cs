@@ -24,11 +24,15 @@ public class GetYearTickerInfoHandler
                                                                                     a.CurrentRoleId == request.RoleId);
                 if (request.RoleId == 4)
                 {
-                     result = await ticketService.ListAsync(null);
+                     result = await ticketService.ListAsync(a => (int)a.RequestTypeId == request.RequestTypeId);
                 }
                 else if (request.RoleId == 5)
                 {
-                    result = await ticketService.ListAsync(a => a.StatusId != 2 || a.UserId == request.UserId);
+                    result = await ticketService.ListAsync(a => (a.StatusId != 2 || a.UserId == request.UserId) && (int)a.RequestTypeId == request.RequestTypeId);
+                }
+                else
+                {
+                    result = await ticketService.ListAsync(a => ((a.UserId == request.UserId) || a.CurrentRoleId == request.RoleId) && (int)a.RequestTypeId == request.RequestTypeId);
                 }
 
                 for (var i = 1; i < 13; i++)
@@ -44,7 +48,7 @@ public class GetYearTickerInfoHandler
                     int awaitingRejecting = result.Where(a => p.GetMonth(a.InsertDate) == i && a.StatusId == 9).Count();
                     resultyear.Add(new MonthTicketItem() {
                         Month = GetMonth(i),
-                        Value = done+inserted+sendtovira+reject+sendtotaz+awaitingConfirmation+inLine+inProgress,
+                        Value = done+inserted+sendtovira+reject+sendtotaz+awaitingConfirmation+inLine+inProgress+ awaitingRejecting,
                     });
                 }
 

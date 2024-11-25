@@ -16,16 +16,17 @@ public class GetRoleTicketInfoHandler
 
                 if (request.RoleId == 4)
                 {
-                    listtickets = await ticketService.ListAsync(null);
+                    listtickets = await ticketService.ListAsync(a => (int)a.RequestTypeId == request.RequestTypeId);
                     inProgresCount = listtickets.Where(a => a.StatusId == 8).Count();
                 }
                 else if (request.RoleId == 5)
                 {
-                    listtickets = await ticketService.ListAsync(a => a.StatusId != 2 || a.UserId == request.UserId);
+                    listtickets = await ticketService.ListAsync(a => (a.StatusId != 2 || a.UserId == request.UserId) && (int)a.RequestTypeId == request.RequestTypeId);
                     inProgresCount = listtickets.Where(a => a.StatusId == 8).Count();
                 }
                 else
                 {
+                    listtickets = await ticketService.ListAsync(a => (a.UserId == request.UserId || a.CurrentRoleId == request.RoleId) && (int)a.RequestTypeId == request.RequestTypeId);
                     inProgresCount = listtickets.Where(a => a.StatusId != 1 && a.StatusId != 2 && a.StatusId != 4).Count();
                 }
 
