@@ -20,10 +20,7 @@ public class GetRoleTicketListHandler
                 }
                 else if (request.RoleId == (int)Role.adminVira)
                 {
-                    if (request.Status != 2)
-                    {
-                        result = await ticketService.ListAsync(a => (a.StatusId == request.Status && (int)a.RequestTypeId == request.RequestTypeId));
-                    }
+                    result = await ticketService.ListAsync(a => (a.StatusId == request.Status && (int)a.RequestTypeId == request.RequestTypeId && (a.StatusId != 2 || a.UserId == request.UserId)));
                 }
                 else
                 {
