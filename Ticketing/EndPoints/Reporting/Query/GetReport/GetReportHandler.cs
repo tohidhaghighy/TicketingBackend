@@ -114,6 +114,8 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                                               request.EndDateTime == DateTime.MinValue || a.InsertDate <= request.EndDateTime)).ToList();
                     }
 
+                    result = result.OrderBy(a => a.InsertDate).ToList(); //sort by InsertDate
+
                     DateTime NowDate = DateTime.Now;
                     PersianCalendar pc = new PersianCalendar();
                     string title = string.Format("{2}-{1}-{0}", pc.GetDayOfMonth(NowDate) , pc.GetMonth(NowDate), pc.GetYear(NowDate));
