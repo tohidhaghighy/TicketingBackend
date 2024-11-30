@@ -25,6 +25,11 @@ public class ChangeStatusHandler
                         findticket.StatusId = request.Status;
                     }
                 }
+                else if(request.Status == (int)StatusId.done)
+                {
+                    findticket.CloseDate = DateTime.Now;
+                    findticket.StatusId = request.Status;
+                }
                 else
                 {
                     findticket.StatusId = request.Status;

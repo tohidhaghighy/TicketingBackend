@@ -39,17 +39,27 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                                          (request.RequestType == (int)RequestType.all || a.RequestTypeId == request.RequestType) &&
                                          (request.DeveloperId == (int)Developer.all || a.DeveloperId == request.DeveloperId)).ToList();
 
-                    if (request.StartDateTime != null)
+                    if (request.InsertStartDateTime != null)
                     {
                         result = result.Where(a => (
-                                             request.StartDateTime == DateTime.MinValue || a.InsertDate >= request.StartDateTime)).ToList();
+                                             request.InsertStartDateTime == DateTime.MinValue || a.InsertDate >= request.InsertStartDateTime)).ToList();
                     }
-                    if (request.EndDateTime != null)
+                    if (request.InsertEndDateTime != null)
                     {
-                        request.EndDateTime = request.EndDateTime?.AddHours(23);// Explanations in the bottom line
-                        request.EndDateTime = request.EndDateTime?.AddMinutes(59); // to set the end day time to 11:59 p.m
+                        request.InsertEndDateTime = request.InsertEndDateTime?.AddHours(23);// Explanations in the bottom line
+                        request.InsertEndDateTime = request.InsertEndDateTime?.AddMinutes(59); // to set the end day time to 11:59 p.m
                         result = result.Where(a => (
-                                             request.EndDateTime == DateTime.MinValue || a.InsertDate <= request.EndDateTime)).ToList();
+                                             request.InsertEndDateTime == DateTime.MinValue || a.InsertDate <= request.InsertEndDateTime)).ToList();
+                    }
+                    if (request.CloseStartDateTime != null)
+                    {
+                        result = result.Where(a => (request.CloseStartDateTime == DateTime.MinValue || a.CloseDate <= request.CloseStartDateTime)).ToList();
+                    }
+                    if(request.CloseEndDateTime != null)
+                    {
+                        request.CloseEndDateTime = request.CloseEndDateTime?.AddHours(23);
+                        request.CloseEndDateTime = request.CloseEndDateTime?.AddMinutes(59);
+                        result = result.Where(a => (request.CloseEndDateTime == DateTime.MinValue || a.CloseDate <= request.CloseEndDateTime)).ToList();
                     }
 
                     var persiandate = new System.Globalization.PersianCalendar();
@@ -62,7 +72,8 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                         StatusId = liststatus.FirstOrDefault(a => a.Id == x.StatusId).Id,
                         Status = liststatus.FirstOrDefault(a => a.Id == x.StatusId).Name,
                         Username = x.Username,
-                        Date = persiandate.GetYear(x.InsertDate) + "/" + persiandate.GetMonth(x.InsertDate) + "/" + persiandate.GetDayOfMonth(x.InsertDate),
+                        InsertDate = persiandate.GetYear(x.InsertDate) + "/" + persiandate.GetMonth(x.InsertDate) + "/" + persiandate.GetDayOfMonth(x.InsertDate),
+                        CloseDate = persiandate.GetYear(x.CloseDate) + "/" + persiandate.GetMinute(x.CloseDate) + "/" + persiandate.GetDayOfMonth(x.CloseDate),
                         Project = listProject.FirstOrDefault(a => a.Id == x.ProjectId).Name,
                         Priority = x.Priority,
                         InsertedRoleId = x.InsertedRoleId,//new 
