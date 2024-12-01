@@ -53,13 +53,13 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                     }
                     if (request.CloseStartDateTime != null)
                     {
-                        result = result.Where(a => (request.CloseStartDateTime == DateTime.MinValue || a.CloseDate <= request.CloseStartDateTime)).ToList();
+                        result = result.Where(a => (request.CloseStartDateTime == DateTime.MinValue || a.ProcessEndDateTime <= request.CloseStartDateTime)).ToList();
                     }
                     if(request.CloseEndDateTime != null)
                     {
                         request.CloseEndDateTime = request.CloseEndDateTime?.AddHours(23);
                         request.CloseEndDateTime = request.CloseEndDateTime?.AddMinutes(59);
-                        result = result.Where(a => (request.CloseEndDateTime == DateTime.MinValue || a.CloseDate <= request.CloseEndDateTime)).ToList();
+                        result = result.Where(a => (request.CloseEndDateTime == DateTime.MinValue || a.ProcessEndDateTime <= request.CloseEndDateTime)).ToList();
                     }
 
                     var persiandate = new System.Globalization.PersianCalendar();
@@ -73,7 +73,7 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                         Status = liststatus.FirstOrDefault(a => a.Id == x.StatusId).Name,
                         Username = x.Username,
                         InsertDate = persiandate.GetYear(x.InsertDate) + "/" + persiandate.GetMonth(x.InsertDate) + "/" + persiandate.GetDayOfMonth(x.InsertDate),
-                        CloseDate = persiandate.GetYear(x.CloseDate) + "/" + persiandate.GetMinute(x.CloseDate) + "/" + persiandate.GetDayOfMonth(x.CloseDate),
+                        CloseDate = persiandate.GetYear(x.CloseDate) + "/" + persiandate.GetMonth(x.CloseDate) + "/" + persiandate.GetDayOfMonth(x.CloseDate),
                         Project = listProject.FirstOrDefault(a => a.Id == x.ProjectId).Name,
                         Priority = x.Priority,
                         InsertedRoleId = x.InsertedRoleId,//new 
