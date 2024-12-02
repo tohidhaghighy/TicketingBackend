@@ -16,7 +16,8 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                     var result = new List<Domain.Entities.Ticket>();
                     var liststatus = await statusService.ListAsync(null);
                     var listProject = await projectService.ListAsync(null);
-                    
+
+                    #region TicketNumber logic
                     if (request.TicketNumber.Contains("*"))
                     {
                         request.TicketNumber = request.TicketNumber.Replace("*", "");
@@ -28,7 +29,9 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                         result = await ticketService.ListAsync(a =>
                                                               (request.TicketNumber == "" || a.TicketNumber == request.TicketNumber));
                     }
+                    #endregion
 
+                    #region Multiple select filters
                     result = result.Where(a =>
                                          (request.Title == "" || a.Title.Contains(request.Title)) &&
                                          (request.InsertedRoleId == (int)Role.all || a.InsertedRoleId == request.InsertedRoleId) &&
@@ -39,6 +42,9 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                                          (request.RequestType == (int)RequestType.all || a.RequestTypeId == request.RequestType) &&
                                          (request.DeveloperId == (int)Developer.all || a.DeveloperId == request.DeveloperId)).ToList();
 
+                    #endregion
+
+                    #region Handel time scope
                     if (request.InsertStartDateTime != null)
                     {
                         result = result.Where(a => (
@@ -61,7 +67,9 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                         request.CloseEndDateTime = request.CloseEndDateTime?.AddMinutes(59);
                         result = result.Where(a => (request.CloseEndDateTime == DateTime.MinValue || a.ProcessEndDateTime <= request.CloseEndDateTime)).ToList();
                     }
+                    #endregion
 
+                    #region return structure
                     var persiandate = new System.Globalization.PersianCalendar();
                     return result.OrderByDescending(a => a.TicketRowNumber).ToList().Select(x => new
                     {
@@ -82,6 +90,7 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                         TicketTime = x.TicketTime ?? "0",
                         DeveloperId = x.DeveloperId != 0 ? x.DeveloperId : Developer.unknown,
                     });
+                    #endregion
                 }
                 catch (Exception ex)
                 {
