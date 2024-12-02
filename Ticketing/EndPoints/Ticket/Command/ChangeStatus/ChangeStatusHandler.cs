@@ -13,7 +13,7 @@ public class ChangeStatusHandler
             try
             {
                 var findticket = await ticketService.GetAsync(a => a.Id == request.TicketId);
-                if (request.Status == (int)StatusId.awaitingConfirmation)
+                if (request.Status == (int)StatusId.awaitingConfirmation || request.Status == (int)StatusId.awaitingRejecting)
                 {
                     if (findticket.ProcessEndDateTime == null)
                     {
