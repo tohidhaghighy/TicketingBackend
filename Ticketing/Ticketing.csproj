@@ -31,6 +31,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Ticketing.Application\Ticketing.Application.csproj" />
       <ProjectReference Include="..\Ticketing.Infrastructure\Ticketing.Infrastructure.csproj" />
+      <ProjectReference Include="..\Ticketing.Utility\Ticketing.Utility.csproj" />
     </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@
 using Ticketing.Domain.Contracts;
 using Ticketing.Domain.Enums;
 using Ticketing.EndPoints.Ticket.Query.GetGroupTicketList;
+using Ticketing.Utility;
 
 namespace Ticketing.EndPoints.Search.Query.GetSearchResult
 {
@@ -32,15 +33,80 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                     #endregion
 
                     #region Multiple select filters
-                    result = result.Where(a =>
-                                         (request.Title == "" || a.Title.Contains(request.Title)) &&
-                                         (request.InsertedRoleId == (int)Role.all || a.InsertedRoleId == request.InsertedRoleId) &&
-                                         (request.Username == "" || a.Username.Contains(request.Username)) &&
-                                         (request.CurrentRoleId == (int)Role.all || a.CurrentRoleId == request.CurrentRoleId) &&
-                                         (request.StatusId == (int)StatusId.all || a.StatusId == request.StatusId) &&
-                                         (request.ProjectId == (int)ProjectId.all || a.ProjectId == request.ProjectId) &&
-                                         (request.RequestType == (int)RequestType.all || a.RequestTypeId == request.RequestType) &&
-                                         (request.DeveloperId == (int)Developer.all || a.DeveloperId == request.DeveloperId)).ToList();
+                    if(request.Title != "")
+                    {
+                        result = result.Where(a => a.Title.Contains(request.Title)).ToList();
+                    }
+                    if(request.Username != "")
+                    {
+                        result = result.Where(a => a.Username.Contains(request.Username)).ToList();
+                    }
+
+                    var InsertedRoleId = request.InsertedRoleId.ConvertStringToListIntiger();
+                    if (request.InsertedRoleId != "")
+                    {
+                        var temResult = new List<Domain.Entities.Ticket>();
+                        foreach (var roleId in request.InsertedRoleId)
+                        {
+                            temResult.AddRange(result.Where(a => a.InsertedRoleId == roleId));
+                        }
+                        result = temResult.Distinct().ToList();
+                    }
+                    if (request.CurrentRoleId.Contains((int)Role.all))
+                    {
+                        var temResult = new List<Domain.Entities.Ticket>();
+                        foreach(var currentRoleId in request.CurrentRoleId)
+                        {
+                            temResult.AddRange(result.Where(a => a.CurrentRoleId == currentRoleId));
+                        }
+                        result = temResult.Distinct().ToList();
+                    }
+                    if(request.StatusId.Contains((int)StatusId.all))
+                    {
+                        var temResult = new List<Domain.Entities.Ticket>();
+                        foreach(var statusId in request.StatusId)
+                        {
+                            temResult.AddRange(result.Where(a => a.StatusId == statusId));
+                        }
+                        result = temResult.Distinct().ToList();
+                    }
+                    if(request.ProjectId.Contains((int)ProjectId.all))
+                    {
+                        var temResult = new List<Domain.Entities.Ticket>();
+                        foreach( var projectId in request.ProjectId)
+                        {
+                            temResult.AddRange(result.Where(a => a.ProjectId == projectId));
+                        }
+                        result = temResult.Distinct().ToList();
+                    }
+                    if(request.RequestType.Contains((int)RequestType.all))
+                    {
+                        var temResult = new List<Domain.Entities.Ticket>();
+                        foreach(var requestTypeId in request.RequestType)
+                        {
+                            temResult.AddRange(result.Where(a => (int)a.RequestTypeId == requestTypeId));
+                        }
+                        result = temResult.Distinct().ToList();
+                    }
+                    if(request.DeveloperId.Contains((int)Developer.all))
+                    {
+                        var temResult = new List<Domain.Entities.Ticket>();
+                        foreach(var developerId in request.DeveloperId)
+                        {
+                            temResult.AddRange(result.Where(a => (int)a.DeveloperId == developerId));
+                        }
+                        result = temResult.Distinct().ToList(); //ensures no duplicate records exist in the filtered result
+                    }
+
+                    //result = result.Where(a =>
+                    //                     (request.Title == "" || a.Title.Contains(request.Title)) &&
+                    //                     (request.InsertedRoleId.Contains((int)Role.all) || request.InsertedRoleId.Contains(a.InsertedRoleId) &&
+                    //                     (request.Username == "" || a.Username.Contains(request.Username)) &&
+                    //                     (request.CurrentRoleId.Contains((int)Role.all) || request.CurrentRoleId.Contains(a.CurrentRoleId)) &&
+                    //                     (request.StatusId.Contains((int)StatusId.all) || request.StatusId.Contains(a.StatusId)) &&
+                    //                     (request.ProjectId.Contains((int)ProjectId.all) || request.ProjectId.Contains(a.ProjectId)) &&
+                    //                     (request.RequestType.Contains((int)RequestType.all) || request.RequestType.Contains((int)a.RequestTypeId)) &&
+                    //                     (request.DeveloperId.Contains((int)Developer.all) || request.DeveloperId.Contains((int)a.DeveloperId)).ToList();
 
                     #endregion
 
