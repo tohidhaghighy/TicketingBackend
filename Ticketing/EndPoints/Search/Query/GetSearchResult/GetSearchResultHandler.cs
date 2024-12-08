@@ -85,7 +85,7 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                         Status = liststatus.FirstOrDefault(a => a.Id == x.StatusId).Name,
                         Username = x.Username,
                         InsertDate = persiandate.GetYear(x.InsertDate) + "/" + persiandate.GetMonth(x.InsertDate) + "/" + persiandate.GetDayOfMonth(x.InsertDate),
-                        CloseDate = persiandate.GetYear(x.CloseDate) + "/" + persiandate.GetMonth(x.CloseDate) + "/" + persiandate.GetDayOfMonth(x.CloseDate),
+                        ProcessEndDateTime = x.ProcessEndDateTime == null ? "ثبت نشده" : persiandate.GetYear(Convert.ToDateTime(x.ProcessEndDateTime)) + "/" + persiandate.GetMonth(Convert.ToDateTime(x.ProcessEndDateTime)) + "/" + persiandate.GetDayOfMonth(Convert.ToDateTime(x.ProcessEndDateTime)),
                         Project = listProject.FirstOrDefault(a => a.Id == x.ProjectId).Name,
                         Priority = x.Priority,
                         InsertedRoleId = x.InsertedRoleId,//new 
