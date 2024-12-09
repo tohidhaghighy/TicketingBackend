@@ -25,6 +25,23 @@ public class ChangeStatusHandler
                         findticket.StatusId = request.Status;
                     }
                 }
+                if (request.Status == (int)StatusId.awaitingRejecting)
+                {
+                    if (findticket.ProcessEndDateTime == null)
+                    {
+                        findticket.ProcessEndDateTime = DateTime.Now;
+                        findticket.StatusId = request.Status;
+                    }
+                    else
+                    {
+                        findticket.StatusId = request.Status;
+                    }
+                }
+                else if(request.Status == (int)StatusId.done)
+                {
+                    findticket.CloseDate = DateTime.Now;
+                    findticket.StatusId = request.Status;
+                }
                 else
                 {
                     findticket.StatusId = request.Status;

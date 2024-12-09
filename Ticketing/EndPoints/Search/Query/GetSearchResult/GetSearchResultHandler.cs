@@ -1,7 +1,8 @@
 ﻿using MediatR;
+using Microsoft.IdentityModel.Tokens;
 using Ticketing.Domain.Contracts;
-using Ticketing.Domain.Enums;
 using Ticketing.EndPoints.Ticket.Query.GetGroupTicketList;
+using Ticketing.Utility;
 
 namespace Ticketing.EndPoints.Search.Query.GetSearchResult
 {
@@ -16,42 +17,63 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                     var result = new List<Domain.Entities.Ticket>();
                     var liststatus = await statusService.ListAsync(null);
                     var listProject = await projectService.ListAsync(null);
-                    
+
+                    #region Multi selected items
+                    var InsertedRoleId = request.InsertedRoleId.IsNullOrEmpty() ? null : request.InsertedRoleId.ConvertStringToListIntiger();
+                    var CurrentRoleId = request.CurrentRoleId.IsNullOrEmpty() ? null : request.CurrentRoleId.ConvertStringToListIntiger();
+                    var StatusId = request.StatusId.IsNullOrEmpty() ? null : request.StatusId.ConvertStringToListIntiger();
+                    var ProjectId = request.ProjectId.IsNullOrEmpty() ? null : request.ProjectId.ConvertStringToListIntiger();
+                    var RequestType = request.RequestType.IsNullOrEmpty() ? null : request.RequestType.ConvertStringToListIntiger();
+                    var DeveloperId = request.DeveloperId.IsNullOrEmpty() ? null : request.DeveloperId.ConvertStringToListIntiger();
+                    #endregion
+
+                    #region Handel End DateTime
+                    request.InsertEndDateTime = request.InsertEndDateTime == DateTime.MinValue || request.CloseEndDateTime == null ? null : request.InsertEndDateTime?.AddHours(23);
+                    request.InsertEndDateTime = request.InsertEndDateTime == DateTime.MinValue || request.CloseEndDateTime == null ? null : request.InsertEndDateTime?.AddMinutes(59);
+
+                    request.CloseEndDateTime = request.CloseEndDateTime == DateTime.MinValue || request.CloseEndDateTime == null ? null : request.CloseEndDateTime?.AddHours(23);
+                    request.CloseEndDateTime = request.CloseEndDateTime == DateTime.MinValue || request.CloseEndDateTime == null ? null : request.CloseEndDateTime?.AddMinutes(59);
+                    #endregion
+
+                    #region TicketNumber logic
                     if (request.TicketNumber.Contains("*"))
                     {
                         request.TicketNumber = request.TicketNumber.Replace("*", "");
                         result = await ticketService.ListAsync(a =>
-                                                              (request.TicketNumber == "" || a.TicketNumber.Contains(request.TicketNumber)));
+                                                              (request.TicketNumber.IsNullOrEmpty() || a.TicketNumber.Contains(request.TicketNumber)) &&
+                                                              (request.Title.IsNullOrEmpty() || a.Title.Contains(request.Title)) &&
+                                                              (request.Username.IsNullOrEmpty() || a.Username.Contains(request.Username)) &&
+                                                              (request.InsertedRoleId.IsNullOrEmpty() || InsertedRoleId.Contains(a.InsertedRoleId)) &&
+                                                              (request.CurrentRoleId.IsNullOrEmpty() || CurrentRoleId.Contains(a.CurrentRoleId)) &&
+                                                              (request.StatusId.IsNullOrEmpty() || StatusId.Contains(a.StatusId)) &&
+                                                              (request.ProjectId.IsNullOrEmpty() || ProjectId.Contains(a.ProjectId)) &&
+                                                              (request.RequestType.IsNullOrEmpty() || RequestType.Contains((int)a.RequestTypeId)) &&
+                                                              (request.DeveloperId.IsNullOrEmpty() || DeveloperId.Contains((int)a.DeveloperId)) &&
+                                                              (!request.InsertStartDateTime.HasValue || a.InsertDate >= request.InsertStartDateTime) &&
+                                                              (!request.InsertEndDateTime.HasValue || a.InsertDate <= request.InsertEndDateTime) &&
+                                                              (!request.CloseStartDateTime.HasValue || a.ProcessEndDateTime >= request.CloseStartDateTime) &&
+                                                              (!request.CloseEndDateTime.HasValue || a.ProcessEndDateTime <= request.CloseEndDateTime));
                     }
                     else
                     {
                         result = await ticketService.ListAsync(a =>
-                                                              (request.TicketNumber == "" || a.TicketNumber == request.TicketNumber));
+                                                              (request.TicketNumber.IsNullOrEmpty() || a.TicketNumber == request.TicketNumber) &&
+                                                              (request.Title.IsNullOrEmpty() || a.Title.Contains(request.Title)) &&
+                                                              (request.Username.IsNullOrEmpty() || a.Username.Contains(request.Username)) &&
+                                                              (request.InsertedRoleId.IsNullOrEmpty() || InsertedRoleId.Contains(a.InsertedRoleId)) &&
+                                                              (request.CurrentRoleId.IsNullOrEmpty() || CurrentRoleId.Contains(a.CurrentRoleId)) &&
+                                                              (request.StatusId.IsNullOrEmpty() || StatusId.Contains(a.StatusId)) &&
+                                                              (request.ProjectId.IsNullOrEmpty() || ProjectId.Contains(a.ProjectId)) &&
+                                                              (request.RequestType.IsNullOrEmpty() || RequestType.Contains((int)a.RequestTypeId)) &&
+                                                              (request.DeveloperId.IsNullOrEmpty() || DeveloperId.Contains((int)a.DeveloperId)) &&
+                                                              (!request.InsertStartDateTime.HasValue || a.InsertDate >= request.InsertStartDateTime) &&
+                                                              (!request.InsertEndDateTime.HasValue || a.InsertDate <= request.InsertEndDateTime) &&
+                                                              (!request.CloseStartDateTime.HasValue || a.ProcessEndDateTime >= request.CloseStartDateTime) &&
+                                                              (!request.CloseEndDateTime.HasValue || a.ProcessEndDateTime <= request.CloseEndDateTime));
                     }
+                    #endregion
 
-                    result = result.Where(a =>
-                                         (request.Title == "" || a.Title.Contains(request.Title)) &&
-                                         (request.InsertedRoleId == (int)Role.all || a.InsertedRoleId == request.InsertedRoleId) &&
-                                         (request.Username == "" || a.Username.Contains(request.Username)) &&
-                                         (request.CurrentRoleId == (int)Role.all || a.CurrentRoleId == request.CurrentRoleId) &&
-                                         (request.StatusId == (int)StatusId.all || a.StatusId == request.StatusId) &&
-                                         (request.ProjectId == (int)ProjectId.all || a.ProjectId == request.ProjectId) &&
-                                         (request.RequestType == (int)RequestType.all || a.RequestTypeId == request.RequestType) &&
-                                         (request.DeveloperId == (int)Developer.all || a.DeveloperId == request.DeveloperId)).ToList();
-
-                    if (request.StartDateTime != null)
-                    {
-                        result = result.Where(a => (
-                                             request.StartDateTime == DateTime.MinValue || a.InsertDate >= request.StartDateTime)).ToList();
-                    }
-                    if (request.EndDateTime != null)
-                    {
-                        request.EndDateTime = request.EndDateTime?.AddHours(23);// Explanations in the bottom line
-                        request.EndDateTime = request.EndDateTime?.AddMinutes(59); // to set the end day time to 11:59 p.m
-                        result = result.Where(a => (
-                                             request.EndDateTime == DateTime.MinValue || a.InsertDate <= request.EndDateTime)).ToList();
-                    }
-
+                    #region return structure
                     var persiandate = new System.Globalization.PersianCalendar();
                     return result.OrderByDescending(a => a.TicketRowNumber).ToList().Select(x => new
                     {
@@ -62,15 +84,17 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                         StatusId = liststatus.FirstOrDefault(a => a.Id == x.StatusId).Id,
                         Status = liststatus.FirstOrDefault(a => a.Id == x.StatusId).Name,
                         Username = x.Username,
-                        Date = persiandate.GetYear(x.InsertDate) + "/" + persiandate.GetMonth(x.InsertDate) + "/" + persiandate.GetDayOfMonth(x.InsertDate),
+                        InsertDate = persiandate.GetYear(x.InsertDate) + "/" + persiandate.GetMonth(x.InsertDate) + "/" + persiandate.GetDayOfMonth(x.InsertDate),
+                        ProcessEndDateTime = x.ProcessEndDateTime == null ? "ثبت نشده" : persiandate.GetYear(Convert.ToDateTime(x.ProcessEndDateTime)) + "/" + persiandate.GetMonth(Convert.ToDateTime(x.ProcessEndDateTime)) + "/" + persiandate.GetDayOfMonth(Convert.ToDateTime(x.ProcessEndDateTime)),
                         Project = listProject.FirstOrDefault(a => a.Id == x.ProjectId).Name,
                         Priority = x.Priority,
                         InsertedRoleId = x.InsertedRoleId,//new 
                         CurrentRoleId = x.CurrentRoleId,
                         RequestType = x.RequestTypeId,
                         TicketTime = x.TicketTime ?? "0",
-                        DeveloperId = x.DeveloperId != 0 ? x.DeveloperId : Developer.unknown,
+                        DeveloperId = x.DeveloperId,
                     });
+                    #endregion
                 }
                 catch (Exception ex)
                 {
