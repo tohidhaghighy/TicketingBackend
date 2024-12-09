@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using DocumentFormat.OpenXml;
+using MediatR;
 using Microsoft.IdentityModel.Tokens;
 using Ticketing.Domain.Contracts;
 using Ticketing.EndPoints.Ticket.Query.GetGroupTicketList;
@@ -25,11 +26,12 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                     var ProjectId = request.ProjectId.IsNullOrEmpty() ? null : request.ProjectId.ConvertStringToListIntiger();
                     var RequestType = request.RequestType.IsNullOrEmpty() ? null : request.RequestType.ConvertStringToListIntiger();
                     var DeveloperId = request.DeveloperId.IsNullOrEmpty() ? null : request.DeveloperId.ConvertStringToListIntiger();
+                    var IsSchadule = request.IsSchadule.IsNullOrEmpty() ? null : request.IsSchadule.ConvertStringToListIntiger();
                     #endregion
 
                     #region Handel End DateTime
-                    request.InsertEndDateTime = request.InsertEndDateTime == DateTime.MinValue || request.CloseEndDateTime == null ? null : request.InsertEndDateTime?.AddHours(23);
-                    request.InsertEndDateTime = request.InsertEndDateTime == DateTime.MinValue || request.CloseEndDateTime == null ? null : request.InsertEndDateTime?.AddMinutes(59);
+                    request.InsertEndDateTime = request.InsertEndDateTime == DateTime.MinValue || request.InsertEndDateTime == null ? null : request.InsertEndDateTime?.AddHours(23);
+                    request.InsertEndDateTime = request.InsertEndDateTime == DateTime.MinValue || request.InsertEndDateTime == null ? null : request.InsertEndDateTime?.AddMinutes(59);
 
                     request.CloseEndDateTime = request.CloseEndDateTime == DateTime.MinValue || request.CloseEndDateTime == null ? null : request.CloseEndDateTime?.AddHours(23);
                     request.CloseEndDateTime = request.CloseEndDateTime == DateTime.MinValue || request.CloseEndDateTime == null ? null : request.CloseEndDateTime?.AddMinutes(59);
@@ -49,6 +51,7 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                                                               (request.ProjectId.IsNullOrEmpty() || ProjectId.Contains(a.ProjectId)) &&
                                                               (request.RequestType.IsNullOrEmpty() || RequestType.Contains((int)a.RequestTypeId)) &&
                                                               (request.DeveloperId.IsNullOrEmpty() || DeveloperId.Contains((int)a.DeveloperId)) &&
+                                                              (request.IsSchadule.IsNullOrEmpty() || IsSchadule.Contains((int)a.IsSchedule)) &&
                                                               (!request.InsertStartDateTime.HasValue || a.InsertDate >= request.InsertStartDateTime) &&
                                                               (!request.InsertEndDateTime.HasValue || a.InsertDate <= request.InsertEndDateTime) &&
                                                               (!request.CloseStartDateTime.HasValue || a.ProcessEndDateTime >= request.CloseStartDateTime) &&
@@ -66,6 +69,7 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                                                               (request.ProjectId.IsNullOrEmpty() || ProjectId.Contains(a.ProjectId)) &&
                                                               (request.RequestType.IsNullOrEmpty() || RequestType.Contains((int)a.RequestTypeId)) &&
                                                               (request.DeveloperId.IsNullOrEmpty() || DeveloperId.Contains((int)a.DeveloperId)) &&
+                                                              (request.IsSchadule.IsNullOrEmpty() || IsSchadule.Contains((int)a.IsSchedule)) &&
                                                               (!request.InsertStartDateTime.HasValue || a.InsertDate >= request.InsertStartDateTime) &&
                                                               (!request.InsertEndDateTime.HasValue || a.InsertDate <= request.InsertEndDateTime) &&
                                                               (!request.CloseStartDateTime.HasValue || a.ProcessEndDateTime >= request.CloseStartDateTime) &&
