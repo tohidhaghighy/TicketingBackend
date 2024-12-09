@@ -25,4 +25,5 @@ public class Ticket : BaseEntity<int>
     public string? TicketTime { get; set; }
     public Developer DeveloperId { get; set; }
     public DateTime? ProcessEndDateTime { get; set; }
+    public IsSchedule IsSchedule { get; set; }
 }

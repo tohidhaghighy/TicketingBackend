@@ -57,7 +57,8 @@ public class AddTicketHandler
                                    persiandate.GetMonth(DateTime.Now).ToString() +
                                    persiandate.GetDayOfMonth(DateTime.Now).ToString() +
                                    rowNumber.Value.ToString("000#"),
-                        DeveloperId=Developer.unknown
+                        DeveloperId=Developer.unknown,
+                        IsSchedule = request.IsSchedule,
                     });
 
                     await ticketFlowService.AddAsync(new Domain.Entities.TicketFlow()
@@ -95,7 +96,8 @@ public class AddTicketHandler
                                    persiandate.GetMonth(DateTime.Now).ToString() +
                                    persiandate.GetDayOfMonth(DateTime.Now).ToString() +
                                    rowNumber.Value.ToString("000#"),
-                        DeveloperId = Developer.unknown
+                        DeveloperId = Developer.unknown,
+                        IsSchedule = request.IsSchedule,
                     });
 
                     await ticketFlowService.AddAsync(new Domain.Entities.TicketFlow()
@@ -117,6 +119,6 @@ public class AddTicketHandler
             }
 
             return null;
-        }
+         }
     }
 }
