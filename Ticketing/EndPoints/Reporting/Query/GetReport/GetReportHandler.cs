@@ -1,11 +1,14 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
+using System.Linq;
 using Ticketing.Domain.Contracts;
 using Ticketing.Domain.Enums;
 using Ticketing.EndPoints.Reporting.Query.Dtos;
 using Ticketing.EndPoints.Reporting.Query.Export;
 using Ticketing.EndPoints.Reporting.Query.GetReport;
+using Ticketing.Utility;
 
 namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
 {
@@ -18,9 +21,10 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                             ILogger<GetReportHandler> _logger) :
                             IRequestHandler<GetReportQuery, FileContentResult>
         {
-            private string statusRturn(int a)
+            #region enum returns
+            private string statusRturn(int statusId)
             {
-                switch (a)
+                switch (statusId)
                 {
                     case 1:
                         return "انجام شده";
@@ -43,9 +47,9 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                 }
                 return "تعریف نشده";
             }
-            private string projectRturn(int a)
+            private string projectRturn(int projectId)
             {
-                switch (a)
+                switch (projectId)
                 {
                     case 1:
                         return "سامانه مدیریت پرونده ها";
@@ -62,9 +66,9 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                 }
                 return "تعریف نشده";
             }
-            private string requestRturn(object a)
+            private string requestRturn(object requestId)
             {
-                switch (a)
+                switch (requestId)
                 {
                     case RequestType.Support:
                         return "پشتیبانی";
@@ -73,9 +77,9 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                 }
                 return "تعریف نشده";
             }
-            private string priorityRturn(object a)
+            private string priorityRturn(object priorityId)
             {
-                switch (a)
+                switch (priorityId)
                 {
                     case Priority.high:
                         return "بالا";
@@ -86,63 +90,111 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                 }
                 return "تعریف نشده";
             }
+            private string IsScheduleReturn(object isScheduleId) 
+            {
+                switch (isScheduleId) 
+                {
+                    case IsSchedule.yes:
+                        return "بله";
+                    case IsSchedule.no:
+                        return "خیر";
+                    case IsSchedule.Support:
+                        return "-";
+                }
+                return "تعریف نشده";
+            }
+            #endregion
+
             public async Task<FileContentResult> Handle(GetReportQuery request, CancellationToken cancellationToken)
             {
                 try
                 {
+                    #region Props
                     var result = new List<Domain.Entities.Ticket>();
                     var liststatus = await statusService.ListAsync(null);
                     var listProject = await projectService.ListAsync(null);
                     var footersum = new List<string>(); // For foter sum colum (Empty in this code)
-                    
+                    #endregion
+
+                    #region Multi selected items
+                    var StatusId = request.StatusId.IsNullOrEmpty() ? null : request.StatusId.ConvertStringToListIntiger();
+                    var ProjectId = request.ProjectId.IsNullOrEmpty() ? null : request.ProjectId.ConvertStringToListIntiger();
+                    var RequestType = request.RequestType.IsNullOrEmpty() ? null : request.RequestType.ConvertStringToListIntiger();
+                    var DeveloperId = request.DeveloperId.IsNullOrEmpty() ? null : request.DeveloperId.ConvertStringToListIntiger();
+                    var Priority = request.Priority.IsNullOrEmpty() ? null : request.Priority.ConvertStringToListIntiger();
+                    var IsSchadule = request.IsSchadule.IsNullOrEmpty() ? null : request.IsSchadule.ConvertStringToListIntiger();
+                    #endregion
+
+                    #region Handel End DateTime
+                    request.InsertEndDateTime = request.InsertEndDateTime == DateTime.MinValue || request.InsertEndDateTime == null ? null : request.InsertEndDateTime?.AddHours(23);
+                    request.InsertEndDateTime = request.InsertEndDateTime == DateTime.MinValue || request.InsertEndDateTime == null ? null : request.InsertEndDateTime?.AddMinutes(59);
+
+                    request.CloseEndDateTime = request.CloseEndDateTime == DateTime.MinValue || request.CloseEndDateTime == null ? null : request.CloseEndDateTime?.AddHours(23);
+                    request.CloseEndDateTime = request.CloseEndDateTime == DateTime.MinValue || request.CloseEndDateTime == null ? null : request.CloseEndDateTime?.AddMinutes(59);
+                    #endregion
+
+                    #region find data
                     result = await ticketService.ListAsync(a =>
-                                                          (request.ProjectId == (int)ProjectId.all || a.ProjectId == request.ProjectId) &&
-                                                          (request.Priority == Priority.all || a.Priority == request.Priority) &&
-                                                          (request.RequestType == RequestType.all || a.RequestTypeId == request.RequestType) &&
-                                                          (request.StatusId == (int)StatusId.all || a.StatusId == request.StatusId) &&
-                                                          (request.DeveloperId == Developer.all || a.DeveloperId == request.DeveloperId));
-                    if (request.StartDateTime != null)
-                    {
-                        result = result.Where(a => (
-                                              request.StartDateTime == DateTime.MinValue || a.InsertDate >= request.StartDateTime)).ToList();
-                    }
-                    if (request.EndDateTime != null)
-                    {
-                        request.EndDateTime = request.EndDateTime?.AddHours(23);// Explanations in the bottom line
-                        request.EndDateTime = request.EndDateTime?.AddMinutes(59); // to set the end day time to 11:59 p.m
-                        result = result.Where(a => (
-                                              request.EndDateTime == DateTime.MinValue || a.InsertDate <= request.EndDateTime)).ToList();
-                    }
+                                                          (request.ProjectId.IsNullOrEmpty() || ProjectId.Contains(a.ProjectId)) &&
+                                                          (request.Priority.IsNullOrEmpty() || Priority.Contains((int)a.Priority)) &&
+                                                          (request.RequestType.IsNullOrEmpty() || RequestType.Contains((int)a.RequestTypeId)) &&
+                                                          (request.StatusId.IsNullOrEmpty() || StatusId.Contains(a.StatusId)) &&
+                                                          (request.DeveloperId.IsNullOrEmpty() || DeveloperId.Contains((int)a.DeveloperId)) &&
+                                                          (request.IsSchadule.IsNullOrEmpty() || IsSchadule.Contains((int)a.IsSchedule)) &&
+                                                          (!request.InsertStartDateTime.HasValue || a.InsertDate >= request.InsertStartDateTime) &&
+                                                          (!request.InsertEndDateTime.HasValue || a.InsertDate <= request.InsertEndDateTime) &&
+                                                          (!request.CloseStartDateTime.HasValue || a.ProcessEndDateTime >= request.CloseStartDateTime) &&
+                                                          (!request.CloseEndDateTime.HasValue || a.ProcessEndDateTime <= request.CloseEndDateTime));
 
                     result = result.OrderBy(a => a.InsertDate).ToList(); //sort by InsertDate
+                    #endregion
 
+                    #region time handeling time
                     DateTime NowDate = DateTime.Now;
                     PersianCalendar pc = new PersianCalendar();
                     string title = string.Format("{2}-{1}-{0}", pc.GetDayOfMonth(NowDate) , pc.GetMonth(NowDate), pc.GetYear(NowDate));
+                    #endregion
 
-                    #region Handel null start and end date
-                    string start = "تعیین نشده";
-                    string end = "تعیین نشده";
-                    if (request.StartDateTime != null)
+                    #region Handel  start and end date
+                    string I_start = "تعیین نشده";
+                    string I_end = "تعیین نشده";
+                    string C_start = "تعیین نشده";
+                    string C_end = "تعیین نشده";
+                    if (request.InsertStartDateTime != null)
                     {
-                        start = string.Format("{2}/{1}/{0}", pc.GetYear((DateTime)request.StartDateTime), pc.GetMonth((DateTime)request.StartDateTime), pc.GetDayOfMonth((DateTime)request.StartDateTime));
+                        I_start = string.Format("{2}/{1}/{0}", pc.GetYear((DateTime)request.InsertStartDateTime), pc.GetMonth((DateTime)request.InsertStartDateTime), pc.GetDayOfMonth((DateTime)request.InsertStartDateTime));
                     }
-                    if(request.EndDateTime != null)
+                    if(request.InsertEndDateTime != null)
                     {
-                        end = string.Format("{2}/{1}/{0}", pc.GetYear((DateTime)request.EndDateTime), pc.GetMonth((DateTime)request.EndDateTime), pc.GetDayOfMonth((DateTime)request.EndDateTime));
+                        I_end = string.Format("{2}/{1}/{0}", pc.GetYear((DateTime)request.InsertEndDateTime), pc.GetMonth((DateTime)request.InsertEndDateTime), pc.GetDayOfMonth((DateTime)request.InsertEndDateTime));
+                    }
+                    if (request.CloseStartDateTime != null)
+                    {
+                        C_start = string.Format("{2}/{1}/{0}", pc.GetYear((DateTime)request.CloseStartDateTime), pc.GetMonth((DateTime)request.CloseStartDateTime), pc.GetDayOfMonth((DateTime)request.CloseStartDateTime));
+                    }
+                    if (request.CloseEndDateTime != null)
+                    {
+                        C_end = string.Format("{2}/{1}/{0}", pc.GetYear((DateTime)request.CloseEndDateTime), pc.GetMonth((DateTime)request.CloseEndDateTime), pc.GetDayOfMonth((DateTime)request.CloseEndDateTime));
                     }
                     #endregion
 
+                    #region ReportResultHeader
                     var ReportResultHeader = new ReportHeaderInfo()
                     {
-                        startDate = start,
+                        InsertStartDateTime = I_start,
 
-                        endDate = end,
+                        InsertEndDateTime = I_end,
+
+                        CloseStartDateTime =C_start,
+
+                        CloseEndDateTime =C_end,
 
                         PrintDate = string.Format("{2}/{1}/{0} {3}:{4}", pc.GetYear(NowDate), pc.GetMonth(NowDate),
                         pc.GetDayOfMonth(NowDate), pc.GetHour(NowDate), pc.GetMinute(NowDate)),
                     };
+                    #endregion
 
+                    #region headerInfoxslx
                     var headerInfoxslx = new List<string>
                     {
                         "شماره ردیف",
@@ -150,6 +202,7 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         "ثبت کننده",
                         "تاریخ ثبت",
                         "نوع درخواست",
+                        "بر اساس برنامه زمانبندی می باشد",
                         "اولویت",
                         "عنوان",
                         "سامانه",
@@ -158,7 +211,9 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         "ساعت صرف شده",
                         "تاریخ و ساعت تحویل تیکت"
                     };
+                    #endregion
 
+                    #region cellInfo
                     var CreatedList = result.Select((x, r) => new[]
                     {
                         new CellInfo() {Text = (r + 1).ToString() },
@@ -169,6 +224,7 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                                                new PersianCalendar().GetDayOfMonth(x.InsertDate).ToString("D2") 
                                                ,DynamicWidth=true},
                         new CellInfo() {Text = requestRturn(x.RequestTypeId) ,DynamicWidth=true},
+                        new CellInfo() {Text = IsScheduleReturn(x.IsSchedule) , DynamicWidth=true},
                         new CellInfo() {Text = priorityRturn(x.Priority) ,DynamicWidth=true},
                         new CellInfo() {Text = x.Title ,DynamicWidth=true},
                         new CellInfo() {Text = projectRturn(x.ProjectId) ,DynamicWidth=true}, //x.ProjectId.ToString()
@@ -183,7 +239,9 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                                                new PersianCalendar().GetMinute((DateTime)x.ProcessEndDateTime).ToString("D2")
                                                ,DynamicWidth=true},
                     }).ToList();
+                    #endregion
 
+                    #region return excel
                     return _export.ToExcel(title, headerInfoxslx, new List<ExcelDataType>
                     {
                         ExcelDataType.Text,
@@ -199,10 +257,13 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         ExcelDataType.Text,
                     }, CreatedList, footersum, headerInfo: new List<string>
                     {
-                        "از تاریخ :" + ReportResultHeader.startDate,
-                        "تا تاریخ :" + ReportResultHeader.endDate,
+                        "از تاریخ ایجاد :" + ReportResultHeader.InsertStartDateTime,
+                        "تا تاریخ ایجاد :" + ReportResultHeader.InsertEndDateTime,
+                        "از تاریخ تحویل :" + ReportResultHeader.CloseStartDateTime,
+                        "تا تاریخ تحویل :" + ReportResultHeader.CloseEndDateTime,
                         "تاریخ چاپ گزارش :" + ReportResultHeader.PrintDate,
                     });
+                    #endregion
                 }
                 catch (Exception ex)
                 {

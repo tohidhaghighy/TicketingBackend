@@ -6,12 +6,15 @@ namespace Ticketing.EndPoints.Reporting.Query.GetReport
 {
     public class GetReportQuery : IRequest<FileContentResult>
     {
-        public int ProjectId { get; set; }
-        public Priority Priority { get; set; }
-        public RequestType RequestType { get; set; }
-        public int StatusId { get; set; }
-        public Developer DeveloperId { get; set; }
-        public DateTime? StartDateTime { get; set; }
-        public DateTime? EndDateTime { get; set; }
+        public string ProjectId { get; set; }
+        public string Priority { get; set; }
+        public string RequestType { get; set; }
+        public string StatusId { get; set; }
+        public string DeveloperId { get; set; }
+        public string IsSchadule { get; set; }
+        public DateTime? InsertStartDateTime { get; set; }
+        public DateTime? InsertEndDateTime { get; set; }
+        public DateTime? CloseStartDateTime { get; set; }
+        public DateTime? CloseEndDateTime { get; set; }
     }
 }

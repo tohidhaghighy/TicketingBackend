@@ -33,6 +33,10 @@ public class AddTicketHandler
                 var persiandate = new System.Globalization.PersianCalendar();
                 var getlastticket = await ticketService.ListAsync(null);
                 var rowNumber= (getlastticket.Count() == 0 ? 1 : getlastticket.Last().TicketRowNumber + 1);
+                if(request.RequestType == RequestType.Support)
+                {
+                    request.IsSchedule = IsSchedule.Support;                                                                        
+                }
 
                 if (request.RoleId == 4) //if admin tazirat add new ticket, automaticly new ticket send to vira admin and dont need manually chang status in new tickets
                 {
