@@ -39,6 +39,8 @@ public class GetTicketMassageListHandler
                         HaveFile = !(ticketinfo.FilePath.Trim() == ""),
                         TicketTime=ticketinfo.TicketTime,
                         DeveloperId=ticketinfo.DeveloperId,
+                        RequestTypeId=ticketinfo.RequestTypeId,
+                        IsSchedule=ticketinfo.IsSchedule,
                     },
                     messageList = messageList.Select(x => new
                     {
