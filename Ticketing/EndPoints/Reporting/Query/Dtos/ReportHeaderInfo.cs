@@ -2,8 +2,10 @@
 {
     public class ReportHeaderInfo
     {
-        public string startDate { get; set; }
-        public string endDate { get; set; }
+        public string InsertStartDateTime { get; set; }
+        public string InsertEndDateTime { get; set; }
+        public string CloseStartDateTime { get; set; }
+        public string CloseEndDateTime { get; set; }
         public string PrintDate { get; set; }
     }
 }

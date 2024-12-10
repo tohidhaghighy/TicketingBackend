@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.IdentityModel.Tokens;
 using Ticketing.Domain.Contracts;
+using Ticketing.Domain.Enums;
 using Ticketing.EndPoints.Ticket.Query.GetGroupTicketList;
 using Ticketing.Utility;
 
@@ -97,6 +98,7 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                         RequestType = x.RequestTypeId,
                         TicketTime = x.TicketTime ?? "0",
                         DeveloperId = x.DeveloperId,
+                        IsSchedule = x.IsSchedule
                     });
                     #endregion
                 }
