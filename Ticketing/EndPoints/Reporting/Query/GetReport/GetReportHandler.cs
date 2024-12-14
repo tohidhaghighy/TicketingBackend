@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
-using System.Linq;
 using Ticketing.Domain.Contracts;
 using Ticketing.Domain.Enums;
 using Ticketing.EndPoints.Reporting.Query.Dtos;
@@ -90,9 +89,9 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                 }
                 return "تعریف نشده";
             }
-            private string IsScheduleReturn(object isScheduleId) 
+            private string IsScheduleReturn(object isScheduleId)
             {
-                switch (isScheduleId) 
+                switch (isScheduleId)
                 {
                     case IsSchedule.yes:
                         return "بله";
@@ -152,7 +151,7 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                     #region time handeling time
                     DateTime NowDate = DateTime.Now;
                     PersianCalendar pc = new PersianCalendar();
-                    string title = string.Format("{2}-{1}-{0}", pc.GetDayOfMonth(NowDate) , pc.GetMonth(NowDate), pc.GetYear(NowDate));
+                    string title = string.Format("{2}-{1}-{0}", pc.GetDayOfMonth(NowDate), pc.GetMonth(NowDate), pc.GetYear(NowDate));
                     #endregion
 
                     #region Handel  start and end date
@@ -164,7 +163,7 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                     {
                         I_start = string.Format("{2}/{1}/{0}", pc.GetYear((DateTime)request.InsertStartDateTime), pc.GetMonth((DateTime)request.InsertStartDateTime), pc.GetDayOfMonth((DateTime)request.InsertStartDateTime));
                     }
-                    if(request.InsertEndDateTime != null)
+                    if (request.InsertEndDateTime != null)
                     {
                         I_end = string.Format("{2}/{1}/{0}", pc.GetYear((DateTime)request.InsertEndDateTime), pc.GetMonth((DateTime)request.InsertEndDateTime), pc.GetDayOfMonth((DateTime)request.InsertEndDateTime));
                     }
@@ -185,9 +184,9 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
 
                         InsertEndDateTime = I_end,
 
-                        CloseStartDateTime =C_start,
+                        CloseStartDateTime = C_start,
 
-                        CloseEndDateTime =C_end,
+                        CloseEndDateTime = C_end,
 
                         PrintDate = string.Format("{2}/{1}/{0} {3}:{4}", pc.GetYear(NowDate), pc.GetMonth(NowDate),
                         pc.GetDayOfMonth(NowDate), pc.GetHour(NowDate), pc.GetMinute(NowDate)),
@@ -219,9 +218,9 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         new CellInfo() {Text = (r + 1).ToString() },
                         new CellInfo() {Text = x.TicketNumber ,DynamicWidth=true},
                         new CellInfo() {Text = x.Username ,DynamicWidth=true},
-                        new CellInfo() {Text = new PersianCalendar().GetYear(x.InsertDate).ToString("D2") + "/" + 
-                                               new PersianCalendar().GetMonth(x.InsertDate).ToString("D2") + "/" + 
-                                               new PersianCalendar().GetDayOfMonth(x.InsertDate).ToString("D2") 
+                        new CellInfo() {Text = new PersianCalendar().GetYear(x.InsertDate).ToString("D2") + "/" +
+                                               new PersianCalendar().GetMonth(x.InsertDate).ToString("D2") + "/" +
+                                               new PersianCalendar().GetDayOfMonth(x.InsertDate).ToString("D2")
                                                ,DynamicWidth=true},
                         new CellInfo() {Text = requestRturn(x.RequestTypeId) ,DynamicWidth=true},
                         new CellInfo() {Text = IsScheduleReturn(x.IsSchedule) , DynamicWidth=true},
@@ -233,8 +232,8 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         new CellInfo() {Text = (x.TicketTime==null?"0":x.TicketTime) ,DynamicWidth=true},
                         new CellInfo() {Text = x.ProcessEndDateTime == null?"ثبت نشده":
                                                new PersianCalendar().GetYear((DateTime)x.ProcessEndDateTime).ToString("D2") + "/" +
-                                               new PersianCalendar().GetMonth((DateTime)x.ProcessEndDateTime).ToString("D2") + "/" + 
-                                               new PersianCalendar().GetDayOfMonth((DateTime)x.ProcessEndDateTime).ToString("D2") + "  " + 
+                                               new PersianCalendar().GetMonth((DateTime)x.ProcessEndDateTime).ToString("D2") + "/" +
+                                               new PersianCalendar().GetDayOfMonth((DateTime)x.ProcessEndDateTime).ToString("D2") + "  " +
                                                new PersianCalendar().GetHour((DateTime)x.ProcessEndDateTime).ToString("D2") + ":" +
                                                new PersianCalendar().GetMinute((DateTime)x.ProcessEndDateTime).ToString("D2")
                                                ,DynamicWidth=true},
