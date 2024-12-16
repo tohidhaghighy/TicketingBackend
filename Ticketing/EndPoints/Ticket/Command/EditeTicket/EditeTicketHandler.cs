@@ -25,7 +25,10 @@ public class EditeTicketHandler
 
                 if (request.ProjectId != null && request.ProjectId != findticket.ProjectId) {findticket.ProjectId = request.ProjectId;}
 
-                if (request.IsSchedule != null && request.IsSchedule != findticket.IsSchedule) {findticket.IsSchedule = request.IsSchedule;}
+                if (request.RequestType == Domain.Enums.RequestType.Develop)
+                {
+                    if (request.IsSchedule != null && request.IsSchedule != findticket.IsSchedule) {findticket.IsSchedule = request.IsSchedule;}
+                }
 
 
                 return await ticketService.UpdateAsync(findticket);
