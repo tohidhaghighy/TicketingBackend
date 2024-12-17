@@ -9,88 +9,64 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
 {
     public class GetDashboardChartDataHandler
     {
-        public class Handler(ITicketService ticketService, ILogger<GetDashboardChartDataHandler> _logger) : IRequestHandler<GetYearTickerInfoQuery, object>
+        public class Handler(ITicketService ticketService, ILogger<GetDashboardChartDataHandler> _logger) : IRequestHandler<GetDashboardChartDataQuery, object>
         {
-            public async Task<object> Handel(GetYearTickerInfoQuery query, CancellationToken cancellationToken)
+            public async Task<object> Handle(GetDashboardChartDataQuery request, CancellationToken cancellationToken)
             {
                 try
                 {
-                    #region RequestType == Develop
-                    var developInRFPTotal = await ticketService.ListAsync(a =>
-                                                                         a.StatusId == (int)StatusId.inLine ||
-                                                                         a.StatusId == (int)StatusId.inProgress ||
-                                                                         a.StatusId == (int)StatusId.awaitingConfirmation &&
-                                                                         a.IsSchedule == IsSchedule.yes);
+                    #region RequestType == Develop Tickets
+                    var developInRFPTotal = await ticketService.ListAsync(a => a.IsSchedule == IsSchedule.yes);
+                    var developInRFPTotalTickets = new List<Domain.Entities.Ticket>();
+                    developInRFPTotalTickets = developInRFPTotal.Where(a => 
+                                                                           a.StatusId == (int)StatusId.inLine ||
+                                                                           a.StatusId == (int)StatusId.inProgress ||
+                                                                           a.StatusId == (int)StatusId.awaitingConfirmation ||
+                                                                           a.StatusId == (int)StatusId.done).ToList();
 
-                    var developInRFPDone = await ticketService.ListAsync(a =>
-                                                                         a.StatusId == (int)StatusId.awaitingConfirmation &&
-                                                                         a.IsSchedule == IsSchedule.yes);
+                    var developInRFPDone = await ticketService.ListAsync(a => a.IsSchedule == IsSchedule.yes);
+                    var developInRFPDoneTicket = new List<Domain.Entities.Ticket>();
+                    developInRFPDoneTicket = developInRFPDone.Where(a =>
+                                                                         a.IsSchedule == IsSchedule.yes &&
+                                                                         a.StatusId == (int)StatusId.awaitingConfirmation ||
+                                                                         a.StatusId == (int)StatusId.done).ToList();
 
-                    var developOutRFPTotal = await ticketService.ListAsync(a =>
-                                                                         a.StatusId == (int)StatusId.inLine ||
-                                                                         a.StatusId == (int)StatusId.inProgress ||
-                                                                         a.StatusId == (int)StatusId.awaitingConfirmation &&
-                                                                         a.IsSchedule == IsSchedule.no);
+                    var developOutRFPTotal = await ticketService.ListAsync(a => a.IsSchedule == IsSchedule.no);
+                    var developOutRFPTotalTickets = new List<Domain.Entities.Ticket>();
+                    developOutRFPTotalTickets = developOutRFPTotal.Where(a =>
+                                                                        a.StatusId == (int)StatusId.inLine ||
+                                                                        a.StatusId == (int)StatusId.inProgress ||
+                                                                        a.StatusId == (int)StatusId.awaitingConfirmation ||
+                                                                        a.StatusId == (int)StatusId.done).ToList();
 
-                    var developOutRFPDone = await ticketService.ListAsync(a =>
-                                                                         a.StatusId == (int)StatusId.awaitingConfirmation &&
-                                                                         a.IsSchedule == IsSchedule.no);
-                    #endregion
-
-                    #region RequestType == Support
-                    int CompanyCommitmentToSupportTime = 850;
-                    var SupportTicket = await ticketService.ListAsync(a =>
+                    var developOutRFPDone = await ticketService.ListAsync(a => a.IsSchedule == IsSchedule.no);
+                    var developOutRFPDoneTickets = new List<Domain.Entities.Ticket>();
+                    developOutRFPDoneTickets = developOutRFPDone.Where(a =>
                                                                       a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                                      a.StatusId == (int)StatusId.awaitingRejecting ||
-                                                                      a.StatusId == (int)StatusId.done ||
-                                                                      a.StatusId == (int)StatusId.rejected);
+                                                                      a.StatusId == (int)StatusId.done).ToList();
                     #endregion
 
-                    #region Developer Data
+                    #region RequestType == Support Tickets
+                    int CompanyCommitmentToSupportTime = 850;
+                    var Support= await ticketService.ListAsync(a => a.IsSchedule == IsSchedule.Support);
+                    var SupportTicket = new List<Domain.Entities.Ticket>();
+                    SupportTicket = Support.Where(a =>
+                                                  a.StatusId == (int)StatusId.awaitingConfirmation ||
+                                                  a.StatusId == (int)StatusId.awaitingRejecting ||
+                                                  a.StatusId == (int)StatusId.done ||
+                                                  a.StatusId == (int)StatusId.rejected).ToList();
 
-                    #region All Tickets
+                    #endregion
+
+                    #region Developer Tickets
                     var AllTickets = await ticketService.ListAsync(null);
+
+                    var developers = Enum.GetValues(typeof(Developer)).Cast<Developer>()
+                                     .Where(dev => dev != Developer.all && dev != Developer.unknown)
+                                     .ToDictionary(dev => dev.ToString(), dev => AllTickets.Where(a => a.DeveloperId == dev));
                     #endregion
 
-                    #region p_rezayeh
-                    var p_rezayehTicket = AllTickets.Where(a => a.DeveloperId == Developer.p_rezayeh);
-                    #endregion
-
-                    #region m_bagher
-                    var m_bagherTicket = AllTickets.Where(a => a.DeveloperId == Developer.m_bagheri);
-                    #endregion
-
-                    #region t_hagigi
-                    var t_hagigiTicket = AllTickets.Where(a => a.DeveloperId == Developer.t_hagigi);
-                    #endregion
-
-                    #region m_borji
-                    var m_borjiTicket = AllTickets.Where(a => a.DeveloperId == Developer.m_borji);
-                    #endregion
-
-                    #region m_salehi
-                    var m_salehiTicket = AllTickets.Where(a => a.DeveloperId == Developer.m_salehi);
-                    #endregion
-
-                    #region Sh_kazempour
-                    var Sh_kazempourTicket = AllTickets.Where(a => a.DeveloperId == Developer.Sh_kazempour);
-                    #endregion
-
-                    #region e_darvishi
-                    var e_darvishiTicket = AllTickets.Where(a => a.DeveloperId == Developer.e_darvishi);
-                    #endregion
-
-                    #region e_ebrahimi
-                    var e_ebrahimiTicket = AllTickets.Where(a => a.DeveloperId == Developer.e_ebrahimi);
-                    #endregion
-
-                    #region s_mohamadzadeh
-                    var s_mohamadzadehTicket = AllTickets.Where(a => a.DeveloperId == Developer.s_mohamadzadeh);
-                    #endregion
-
-                    #endregion
-
-                    //Return//
+                    //~~~~~~~~~~~~~~~~~~~~~~~~Return~~~~~~~~~~~~~~~~~~~~~~~~//
 
                     #region Return Variables
 
@@ -108,15 +84,15 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                         developResultYearInRFP.Add(new MonthResult
                         {
                             Month = GetMonth(i),
-                            Total = developInRFPTotal.Count(a => p.GetMonth(a.InsertDate) == i),
-                            Done = developInRFPDone.Count(a => p.GetMonth(a.InsertDate) == i)
+                            Total = developInRFPTotalTickets.Count(a => p.GetMonth(a.InsertDate) == i),
+                            Done = developInRFPDoneTicket.Count(a => p.GetMonth(a.InsertDate) == i)
                         });
 
                         developResultYearOutRFP.Add(new MonthResult
                         {
                             Month = GetMonth(i),
-                            Total = developOutRFPTotal.Count(a => p.GetMonth(a.InsertDate) == i),
-                            Done = developOutRFPDone.Count(a => p.GetMonth(a.InsertDate) == i)
+                            Total = developOutRFPTotalTickets.Count(a => p.GetMonth(a.InsertDate) == i),
+                            Done = developOutRFPDoneTickets.Count(a => p.GetMonth(a.InsertDate) == i)
                         });
                     }
                     #endregion
@@ -125,11 +101,19 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                     for (var i = 1; i < 13; i++)
                     {
                         var tickets = SupportTicket.Where(a => p.GetMonth(a.InsertDate) == i);
+                        var totalTime = 0;
+                        foreach(var ticket in tickets)
+                        {
+                            if(int.TryParse(ticket.TicketTime, out var time))
+                            {
+                                totalTime += time;
+                            }
+                        }
                         supportResultYear.Add(new MonthResult
                         {
                             Month = GetMonth(i),
                             CompanyCommitmentTime = CompanyCommitmentToSupportTime,
-                            SupportTime = tickets.Sum(item => int.TryParse(item.TicketTime, out var time) ? time : 0)
+                            SupportTime = totalTime,
                         });
                     }
                     #endregion
@@ -138,28 +122,27 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                     for (var i = 1; i < 13; i++)
                     {
                         var monthResult = new MonthResult { Month = GetMonth(i) };
-
-                        var developers = new Dictionary<string, IEnumerable<Domain.Entities.Ticket>>
+                        
+                        foreach(var developer in developers)
                         {
-                            { "p_rezayeh", p_rezayehTicket.Where(a => p.GetMonth(a.InsertDate) == i) },
-                            { "m_bagheri", m_bagherTicket.Where(a => p.GetMonth(a.InsertDate) == i) },
-                            { "t_hagigi", t_hagigiTicket.Where(a => p.GetMonth(a.InsertDate) == i) },
-                            { "m_borji", m_borjiTicket.Where(a => p.GetMonth(a.InsertDate) == i) },
-                            { "m_salehi", m_salehiTicket.Where(a => p.GetMonth(a.InsertDate) == i) },
-                            { "Sh_kazempour", Sh_kazempourTicket.Where(a => p.GetMonth(a.InsertDate) == i) },
-                            { "e_darvishi", e_darvishiTicket.Where(a => p.GetMonth(a.InsertDate) == i) },
-                            { "e_ebrahimi", e_ebrahimiTicket.Where(a => p.GetMonth(a.InsertDate) == i) },
-                            { "s_mohamadzadeh", s_mohamadzadehTicket.Where(a => p.GetMonth(a.InsertDate) == i) },
-                        };
+                            var tickets = developer.Value.Where(a => p.GetMonth(a.InsertDate) == i);
+                            monthResult.DeveloperCounts[developer.Key] = tickets.Count();
 
-                        foreach (var developer in developers)
-                        {
-                            monthResult.DeveloperCounts[developer.Key] = developer.Value.Count();
-                            monthResult.DeveloperTimes[developer.Key] = developer.Value.Sum(item => int.TryParse(item.TicketTime, out var ticketTime) ? ticketTime : 0);
+                            int totalTime = 0;
+                            foreach(var ticket in tickets)
+                            {
+                                if (int.TryParse(ticket.TicketTime, out var time))
+                                {
+                                    totalTime += time;
+                                }
+                            }
+                            monthResult.DeveloperTimes[developer.Key] = totalTime;
                         }
+                        developerResultYear.Add(monthResult);
                     }
                     #endregion
 
+                    #region result
                     var result = new
                     {
                         DevelopResultYearInRFP = developResultYearInRFP,
@@ -167,6 +150,7 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                         SupportResultYear = supportResultYear,
                         DeveloperResultYear = developerResultYear
                     };
+                    #endregion
 
                     return JsonSerializer.Serialize(result);
                 }
@@ -196,12 +180,9 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                 return "";
             }
 
-            public Task<object> Handle(GetYearTickerInfoQuery request, CancellationToken cancellationToken)
-            {
-                throw new NotImplementedException();
-            }
             #endregion
         }
+        #region MounthResult class
         public class MonthResult
         {
             public string Month { get; set; }
@@ -212,5 +193,6 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
             public Dictionary<string, int> DeveloperCounts { get; set; } = new(); // Developer ticket counts
             public Dictionary<string, int> DeveloperTimes { get; set; } = new();  // Developer ticket times
         }
+        #endregion
     }
 }

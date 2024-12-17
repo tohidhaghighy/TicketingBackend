@@ -1,6 +1,8 @@
-﻿namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
+﻿using MediatR;
+
+namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
 {
-    public class GetDashboardChartDataQuery
+    public class GetDashboardChartDataQuery : IRequest<object>
     {
     }
 }

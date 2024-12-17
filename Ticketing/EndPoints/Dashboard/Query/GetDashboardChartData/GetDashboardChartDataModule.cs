@@ -1,6 +1,5 @@
 ﻿using Carter;
 using MediatR;
-using Ticketing.EndPoints.Ticket.Query.GetYearTickerInfo;
 
 namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
 {
