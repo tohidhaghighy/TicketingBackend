@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Text.Json;
 using Ticketing.Domain.Contracts;
 using Ticketing.Domain.Enums;
-using Ticketing.EndPoints.Ticket.Query.GetYearTickerInfo;
 
 namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
 {
