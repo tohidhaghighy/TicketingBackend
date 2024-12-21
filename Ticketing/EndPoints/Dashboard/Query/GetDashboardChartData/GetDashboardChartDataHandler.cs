@@ -183,7 +183,7 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
         }
         #region MounthResult class
         public class MonthResult
-        {
+        {  
             public string Month { get; set; }
             public int Total { get; set; } // For developInRFPTotal and developOutRFPTotal
             public int Done { get; set; }  // For developInRFPDone and developOutRFPDone
