@@ -6,7 +6,7 @@ using Ticketing.Domain.Enums;
 
 namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
 {
-    public class GetDashboardChartDataHandler
+    public partial class GetDashboardChartDataHandler
     {
         public class Handler(ITicketService ticketService, ILogger<GetDashboardChartDataHandler> _logger) : IRequestHandler<GetDashboardChartDataQuery, object>
         {
@@ -46,7 +46,8 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                     #endregion
 
                     #region RequestType == Support Tickets
-                    int CompanyCommitmentToSupportTime = 850;
+                    // TODO: Change it to dynamic value 
+                    int CompanyCommitmentToSupportTime = 1160;
                     var Support= await ticketService.ListAsync(a => a.IsSchedule == IsSchedule.Support);
                     var SupportTicket = new List<Domain.Entities.Ticket>();
                     SupportTicket = Support.Where(a =>
@@ -69,10 +70,10 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
 
                     #region Return Variables
 
-                    var developResultYearInRFP = new List<MonthResult>();
-                    var developResultYearOutRFP = new List<MonthResult>();
-                    var supportResultYear = new List<MonthResult>();
-                    var developerResultYear = new List<MonthResult>();
+                    var developResultYearInRFP = new List<DevelopResultYear>();
+                    var developResultYearOutRFP = new List<DevelopResultYear>();
+                    var supportResultYear = new List<SupportResultYear>();
+                    var developerResultYear = new List<DeveloperResultYear>();
                     var p = new PersianCalendar();
 
                     #endregion
@@ -80,14 +81,14 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                     #region Developed result
                     for (var i = 1; i < 13; i++)
                     {
-                        developResultYearInRFP.Add(new MonthResult
+                        developResultYearInRFP.Add(new DevelopResultYear
                         {
                             Month = GetMonth(i),
                             Total = developInRFPTotalTickets.Count(a => p.GetMonth(a.InsertDate) == i),
                             Done = developInRFPDoneTicket.Count(a => p.GetMonth(a.InsertDate) == i)
                         });
 
-                        developResultYearOutRFP.Add(new MonthResult
+                        developResultYearOutRFP.Add(new DevelopResultYear
                         {
                             Month = GetMonth(i),
                             Total = developOutRFPTotalTickets.Count(a => p.GetMonth(a.InsertDate) == i),
@@ -108,7 +109,7 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                                 totalTime += time;
                             }
                         }
-                        supportResultYear.Add(new MonthResult
+                        supportResultYear.Add(new SupportResultYear
                         {
                             Month = GetMonth(i),
                             CompanyCommitmentTime = CompanyCommitmentToSupportTime,
@@ -120,12 +121,16 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                     #region Developer Data year result
                     for (var i = 1; i < 13; i++)
                     {
-                        var monthResult = new MonthResult { Month = GetMonth(i) };
+                        var monthResult = new DeveloperResultYear { Month = GetMonth(i) };
                         
                         foreach(var developer in developers)
                         {
                             var tickets = developer.Value.Where(a => p.GetMonth(a.InsertDate) == i);
-                            monthResult.DeveloperCounts[developer.Key] = tickets.Count();
+                            monthResult.DeveloperCounts.Add(new DeveloperData()
+                            {
+                                name= developer.Key,
+                                value= tickets.Count()
+                            });
 
                             int totalTime = 0;
                             foreach(var ticket in tickets)
@@ -135,7 +140,11 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                                     totalTime += time;
                                 }
                             }
-                            monthResult.DeveloperTimes[developer.Key] = totalTime;
+                            monthResult.DeveloperTimes.Add(new DeveloperData()
+                            {
+                                name = developer.Key,
+                                value = totalTime
+                            });
                         }
                         developerResultYear.Add(monthResult);
                     }
@@ -181,17 +190,5 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
 
             #endregion
         }
-        #region MounthResult class
-        public class MonthResult
-        {  
-            public string Month { get; set; }
-            public int Total { get; set; } // For developInRFPTotal and developOutRFPTotal
-            public int Done { get; set; }  // For developInRFPDone and developOutRFPDone
-            public int SupportTime { get; set; } // For support year result
-            public int CompanyCommitmentTime { get; set; } // For support year result
-            public Dictionary<string, int> DeveloperCounts { get; set; } = new(); // Developer ticket counts
-            public Dictionary<string, int> DeveloperTimes { get; set; } = new();  // Developer ticket times
-        }
-        #endregion
     }
 }
