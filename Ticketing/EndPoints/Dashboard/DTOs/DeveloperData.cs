@@ -2,9 +2,6 @@
 {
     public partial class GetDashboardChartDataHandler
     {
-        #region DeveloperResultYear class
-        #endregion
-
         #region DeveloperData class
         public class DeveloperData
         {

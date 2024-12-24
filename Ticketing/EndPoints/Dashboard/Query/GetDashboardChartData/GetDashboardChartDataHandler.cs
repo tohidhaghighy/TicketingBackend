@@ -119,14 +119,16 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                     #endregion
 
                     #region Developer Data year result
+                    var developerResultCount = new List<List<DeveloperData>>();
+                    var developerResultTime = new List<List<DeveloperData>>();
                     for (var i = 1; i < 13; i++)
                     {
-                        var monthResult = new DeveloperResultYear { Month = GetMonth(i) };
-                        
-                        foreach(var developer in developers)
+                        var monthDataCount = new List<DeveloperData>();
+                        var monthDataTime = new List<DeveloperData>();
+                        foreach (var developer in developers)
                         {
                             var tickets = developer.Value.Where(a => p.GetMonth(a.InsertDate) == i);
-                            monthResult.DeveloperCounts.Add(new DeveloperData()
+                            monthDataCount.Add(new DeveloperData()
                             {
                                 name= developer.Key,
                                 value= tickets.Count()
@@ -140,14 +142,16 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                                     totalTime += time;
                                 }
                             }
-                            monthResult.DeveloperTimes.Add(new DeveloperData()
+                            monthDataTime.Add(new DeveloperData()
                             {
                                 name = developer.Key,
                                 value = totalTime
                             });
                         }
-                        developerResultYear.Add(monthResult);
+                        developerResultCount.Add(monthDataCount);
+                        developerResultTime.Add(monthDataTime);
                     }
+
                     #endregion
 
                     #region result
@@ -156,7 +160,8 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                         DevelopResultYearInRFP = developResultYearInRFP,
                         DevelopResultYearOutRFP = developResultYearOutRFP,
                         SupportResultYear = supportResultYear,
-                        DeveloperResultYear = developerResultYear
+                        DeveloperResultCount = developerResultCount,
+                        DeveloperResultTime = developerResultTime
                     };
                     #endregion
 
