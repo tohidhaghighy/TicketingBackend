@@ -15,14 +15,14 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                 try
                 {
                     #region Develop in RFB
-                    var developInRFPTicket = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Develop && 
+                    var developInRFPTicket = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Develop &&
                                                                            a.IsSchedule == IsSchedule.yes &&
                                                                           (a.StatusId == (int)StatusId.inLine ||
                                                                            a.StatusId == (int)StatusId.inProgress ||
                                                                            a.StatusId == (int)StatusId.awaitingConfirmation ||
                                                                            a.StatusId == (int)StatusId.done));
 
-                    var developInRFPDoneTicket = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Develop && 
+                    var developInRFPDoneTicket = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Develop &&
                                                                                a.IsSchedule == IsSchedule.yes &&
                                                                               (a.StatusId == (int)StatusId.awaitingConfirmation ||
                                                                                a.StatusId == (int)StatusId.done));
@@ -36,7 +36,7 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                                                                             a.StatusId == (int)StatusId.awaitingConfirmation ||
                                                                             a.StatusId == (int)StatusId.done));
 
-                    var developOutRFPDoneTickets = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Develop && 
+                    var developOutRFPDoneTickets = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Develop &&
                                                                                  a.IsSchedule == IsSchedule.no &&
                                                                                 (a.StatusId == (int)StatusId.awaitingConfirmation ||
                                                                                  a.StatusId == (int)StatusId.done));
@@ -45,48 +45,8 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                     #region Support Tickets
                     // TODO: Change it to dynamic value 
                     int CompanyCommitmentToSupportTime = 1160;
-                    var SupportTicket = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Support);
-                    #endregion
-
-                    #region Developer Tickets
-                    var AllValidTickets = await ticketService.ListAsync(a => a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                                             a.StatusId == (int)StatusId.done);
-
-                    var developers = Enum.GetValues(typeof(Developer)).Cast<Developer>()
-                                     .Where(dev => dev != Developer.all && dev != Developer.unknown)
-                                     .ToDictionary(dev => dev.ToString(), dev => AllValidTickets.Where(a => a.DeveloperId == dev));
-
-                    var p_rezayehTickets = await ticketService.ListAsync(a => a.DeveloperId == Developer.p_rezayeh && 
-                                                                             (a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                                              a.StatusId== (int)StatusId.done));
-
-                    var m_bagheriTickets = await ticketService.ListAsync(a => a.DeveloperId == Developer.m_bagheri &&
-                                                                             (a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                                              a.StatusId == (int)StatusId.done));
-
-                    var t_hagigiTickets = await ticketService.ListAsync(a => a.DeveloperId == Developer.t_hagigi &&
-                                                                            (a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                                             a.StatusId == (int)StatusId.done));
-
-                    var m_borjiTickets = await ticketService.ListAsync(a => a.DeveloperId == Developer.m_borji &&
-                                                                           (a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                                            a.StatusId == (int)StatusId.done));
-
-                    var m_salehiTickets = await ticketService.ListAsync(a => a.DeveloperId == Developer.m_salehi &&
-                                                                            (a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                                             a.StatusId == (int)StatusId.done));
-
-                    var Sh_kazempourTickets = await ticketService.ListAsync(a => a.DeveloperId == Developer.Sh_kazempour &&
-                                                                           (a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                                            a.StatusId == (int)StatusId.done));
-
-                    var e_darvishiTickets = await ticketService.ListAsync(a => a.DeveloperId == Developer.e_darvishi &&
-                                                                              (a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                                               a.StatusId == (int)StatusId.done));
-
-                    var s_mohamadzadehTickets = await ticketService.ListAsync(a => a.DeveloperId == Developer.s_mohamadzadeh &&
-                                                                             (a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                                              a.StatusId == (int)StatusId.done));
+                    var SupportTicket = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Support &&
+                                                                      a.ProcessEndDateTime != null);
                     #endregion
 
                     //~~~~~~~~~~~~~~~~~~~~~~~~Return~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -141,358 +101,78 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                     }
                     #endregion
 
-                    #region Developer Data year result
+                    #region Developer month result
 
-                    #region return lists
+                    #region List of developers
+                    var developers = new Dictionary<string, Developer>
+                    {
+                         { "p_rezayeh", Developer.p_rezayeh },
+                         { "m_bagheri", Developer.m_bagheri },
+                         { "t_hagigi", Developer.t_hagigi },
+                         { "m_borji", Developer.m_borji },
+                         { "m_salehi", Developer.m_salehi },
+                         { "Sh_kazempour", Developer.Sh_kazempour },
+                         { "e_darvishi", Developer.e_darvishi },
+                         { "s_mohamadzadeh", Developer.s_mohamadzadeh }
+                    };
+                    #endregion
+
+                    #region Initialize result lists
                     var monthDataCount_support = new List<DeveloperData>();
                     var monthDataTime_support = new List<DeveloperData>();
-
                     var monthDataCount_develop = new List<DeveloperData>();
                     var monthDataTime_develop = new List<DeveloperData>();
                     #endregion
 
-                    #region p_rezayeh
-                    var p_rezayehSupport = p_rezayehTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Support);
-                    var p_rezayehDevelop = p_rezayehTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Develop);
-
-                    #region Support
-                    monthDataCount_support.Add(new DeveloperData()
+                    #region Fetch tickets and process data
+                    foreach (var developer in developers)
                     {
-                        name = "p_rezayeh",
-                        value = p_rezayehSupport.Count()
-                    });
+                        #region Find ticket
+                        var tickets = await ticketService.ListAsync(a =>
+                            a.DeveloperId == developer.Value &&
+                            (a.StatusId == (int)StatusId.awaitingConfirmation || a.StatusId == (int)StatusId.done));
 
-                    int p_rezayehSupportTime = p_rezayehSupport.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_support.Add(new DeveloperData()
-                    {
-                        name = "p_rezayeh",
-                        value = p_rezayehSupportTime
-                    });
-                    #endregion
+                        var supportTickets = tickets.Where(a =>
+                            p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId &&
+                            a.RequestTypeId == RequestType.Support);
 
-                    #region Develop
-                    monthDataCount_develop.Add(new DeveloperData()
-                    {
-                        name = "p_rezayeh",
-                        value = p_rezayehDevelop.Count()
-                    });
+                        var developTickets = tickets.Where(a =>
+                            p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId &&
+                            a.RequestTypeId == RequestType.Develop);
+                        #endregion
 
-                    int p_rezayehDevelopTime = p_rezayehDevelop.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_develop.Add(new DeveloperData()
-                    {
-                        name = "p_rezayeh",
-                        value = p_rezayehDevelopTime
-                    });
-                    #endregion
+                        #region Support count
+                        monthDataCount_support.Add(new DeveloperData
+                        {
+                            name = developer.Key,
+                            value = supportTickets.Count()
+                        });
+                        #endregion
 
-                    #endregion
+                        #region Support time
+                        monthDataTime_support.Add(new DeveloperData
+                        {
+                            name = developer.Key,
+                            value = supportTickets.Sum(ticket => int.Parse(ticket.TicketTime))
+                        });
+                        #endregion
 
-                    #region m_bagheri
-                    var m_bagheriSupport = m_bagheriTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Support);
-                    var m_bagheriDevelop = m_bagheriTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Develop);
+                        #region Develop count
+                        monthDataCount_develop.Add(new DeveloperData
+                        {
+                            name = developer.Key,
+                            value = developTickets.Count()
+                        });
+                        #endregion
 
-                    #region Support
-                    monthDataCount_support.Add(new DeveloperData()
-                    {
-                        name = "m_bagheri",
-                        value = m_bagheriSupport.Count()
-                    });
-
-                    int m_bagheriSupportTime = p_rezayehSupport.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_support.Add(new DeveloperData()
-                    {
-                        name = "m_bagheri",
-                        value = m_bagheriSupportTime
-                    });
-                    #endregion
-
-                    #region Develop
-                    monthDataCount_develop.Add(new DeveloperData()
-                    {
-                        name = "m_bagheri",
-                        value = m_bagheriDevelop.Count()
-                    });
-
-                    int m_bagheriDevelopTime = m_bagheriDevelop.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_develop.Add(new DeveloperData()
-                    {
-                        name = "m_bagheri",
-                        value = m_bagheriDevelopTime
-                    });
-                    #endregion
-
-                    #endregion
-
-                    #region t_hagigi
-                    var t_hagigiSupport = t_hagigiTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Support);
-                    var t_hagigiDevelop = t_hagigiTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Develop);
-
-                    #region Support
-                    monthDataCount_support.Add(new DeveloperData()
-                    {
-                        name = "t_hagigi",
-                        value = t_hagigiSupport.Count()
-                    });
-
-                    int t_hagigiSupportTime = t_hagigiSupport.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_develop.Add(new DeveloperData()
-                    {
-                        name = "t_hagigi",
-                        value = t_hagigiSupportTime
-                    });
-                    #endregion
-
-                    #region Develop
-                    monthDataCount_develop.Add(new DeveloperData()
-                    {
-                        name = "t_hagigi",
-                        value = m_bagheriDevelop.Count()
-                    });
-
-                    int t_hagigiDevelopTime = t_hagigiDevelop.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_develop.Add(new DeveloperData()
-                    {
-                        name = "t_hagigi",
-                        value = t_hagigiDevelopTime
-                    });
-                    #endregion
-
-                    #endregion
-
-                    #region m_borji
-                    var m_borjiSupport = m_borjiTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Support);
-                    var m_borjiDevelop = m_borjiTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Develop);
-
-                    #region Support
-                    monthDataCount_support.Add(new DeveloperData()
-                    {
-                        name = "m_borji",
-                        value = m_borjiSupport.Count()
-                    });
-
-                    int m_borjiSupportTime = m_borjiSupport.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_develop.Add(new DeveloperData()
-                    {
-                        name = "m_borji",
-                        value = m_borjiSupportTime
-                    });
-                    #endregion
-
-                    #region Develop
-                    monthDataCount_develop.Add(new DeveloperData()
-                    {
-                        name = "m_borji",
-                        value = m_borjiDevelop.Count()
-                    });
-
-                    int m_borjiDevelopTime = m_borjiDevelop.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_develop.Add(new DeveloperData()
-                    {
-                        name = "m_borji",
-                        value = m_borjiDevelopTime
-                    });
-                    #endregion
-
-                    #endregion
-
-                    #region m_salehi
-                    var m_salehiSupport = m_salehiTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Support);
-                    var m_salehiDevelop = m_salehiTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Develop);
-
-                    #region Support
-                    monthDataCount_support.Add(new DeveloperData()
-                    {
-                        name = "m_salehi",
-                        value = m_salehiSupport.Count()
-                    });
-
-                    int m_salehiSupportTime = m_salehiSupport.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_develop.Add(new DeveloperData()
-                    {
-                        name = "m_salehi",
-                        value = m_salehiSupportTime
-                    });
-                    #endregion
-
-                    #region Develop
-                    monthDataCount_develop.Add(new DeveloperData()
-                    {
-                        name = "m_salehi",
-                        value = m_salehiDevelop.Count()
-                    });
-
-                    int m_salehiDevelopTime = m_salehiDevelop.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_develop.Add(new DeveloperData()
-                    {
-                        name = "m_salehi",
-                        value = m_salehiDevelopTime
-                    });
-                    #endregion
-
-                    #endregion
-
-                    #region Sh_kazempour
-                    var Sh_kazempourSupport = Sh_kazempourTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Support);
-                    var Sh_kazempourDevelop = Sh_kazempourTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Develop);
-
-                    #region Support
-                    monthDataCount_support.Add(new DeveloperData()
-                    {
-                        name = "Sh_kazempour",
-                        value = Sh_kazempourSupport.Count()
-                    });
-
-                    int Sh_kazempourSupportTime = Sh_kazempourSupport.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_develop.Add(new DeveloperData()
-                    {
-                        name = "Sh_kazempour",
-                        value = Sh_kazempourSupportTime
-                    });
-                    #endregion
-
-                    #region Develop
-                    monthDataCount_develop.Add(new DeveloperData()
-                    {
-                        name = "Sh_kazempour",
-                        value = Sh_kazempourDevelop.Count()
-                    });
-
-                    int Sh_kazempourDevelopTime = Sh_kazempourDevelop.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_develop.Add(new DeveloperData()
-                    {
-                        name = "Sh_kazempour",
-                        value = Sh_kazempourDevelopTime
-                    });
-                    #endregion
-
-                    #endregion
-
-                    #region e_darvishi
-                    var e_darvishiSupport = e_darvishiTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Support);
-                    var e_darvishiDevelop = e_darvishiTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Develop);
-
-                    #region Support
-                    monthDataCount_support.Add(new DeveloperData()
-                    {
-                        name = "e_darvishi",
-                        value = e_darvishiSupport.Count()
-                    });
-
-                    int e_darvishiSupportTime = e_darvishiSupport.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_develop.Add(new DeveloperData()
-                    {
-                        name = "e_darvishi",
-                        value = Sh_kazempourSupportTime
-                    });
-                    #endregion
-
-                    #region Develop
-                    monthDataCount_develop.Add(new DeveloperData()
-                    {
-                        name = "e_darvishi",
-                        value = e_darvishiDevelop.Count()
-                    });
-
-                    int e_darvishiDevelopTime = e_darvishiDevelop.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_develop.Add(new DeveloperData()
-                    {
-                        name = "e_darvishi",
-                        value = Sh_kazempourDevelopTime
-                    });
-                    #endregion
-
-                    #endregion
-
-                    #region s_mohamadzadeh
-                    var s_mohamadzadehSupport = s_mohamadzadehTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Support);
-                    var s_mohamadzadehDevelop = s_mohamadzadehTickets.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Develop);
-
-                    #region Support
-                    monthDataCount_support.Add(new DeveloperData()
-                    {
-                        name = "s_mohamadzadeh",
-                        value = s_mohamadzadehSupport.Count()
-                    });
-
-                    int s_mohamadzadehSupportTime = s_mohamadzadehSupport.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_develop.Add(new DeveloperData()
-                    {
-                        name = "s_mohamadzadeh",
-                        value = s_mohamadzadehSupportTime
-                    });
-                    #endregion
-
-                    #region Develop
-                    monthDataCount_develop.Add(new DeveloperData()
-                    {
-                        name = "s_mohamadzadeh",
-                        value = s_mohamadzadehDevelop.Count()
-                    });
-
-                    int s_mohamadzadehDevelopTime = s_mohamadzadehDevelop.Sum(ticket => int.Parse(ticket.TicketTime));
-                    monthDataTime_develop.Add(new DeveloperData()
-                    {
-                        name = "s_mohamadzadeh",
-                        value = s_mohamadzadehDevelopTime
-                    });
-                    #endregion
-
-                    #endregion
-
-                    #region old query
-
-                    //foreach (var developer in developers)
-                    //{
-                    //    var supportTickets = developer.Value.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Support);
-
-                    //    var developTickets = developer.Value.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId && a.RequestTypeId == RequestType.Develop);
-
-                    //    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-
-                    //    #region Support
-
-                    //    monthDataCount_support.Add(new DeveloperData()
-                    //    {
-                    //        name = developer.Key,
-                    //        value = supportTickets.Count()
-                    //    });
-
-                    //    int supportTotalTime = supportTickets
-                    //        .Where(ticket => ticket.ProcessEndDateTime.HasValue) // Only include tickets with ProcessEndDateTime
-                    //        .Where(ticket => int.TryParse(ticket.TicketTime, out _)) // Ensure TicketTime can be parsed as int
-                    //        .Sum(ticket => int.Parse(ticket.TicketTime)); // Sum up valid TicketTime values
-
-                    //    monthDataTime_support.Add(new DeveloperData()
-                    //    {
-                    //        name = developer.Key,
-                    //        value = supportTotalTime
-                    //    });
-
-                    //    #endregion
-
-                    //    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-
-                    //    #region Develop
-
-                    //    monthDataCount_develop.Add(new DeveloperData()
-                    //    {
-                    //        name = developer.Key,
-                    //        value = developTickets.Count()
-                    //    });
-
-                    //    int developTotalTime = developTickets
-                    //        .Where(ticket => ticket.ProcessEndDateTime.HasValue) // Only include tickets with ProcessEndDateTime
-                    //        .Where(ticket => int.TryParse(ticket.TicketTime, out _)) // Ensure TicketTime can be parsed as int
-                    //        .Sum(ticket => int.Parse(ticket.TicketTime)); // Sum up valid TicketTime values
-
-                    //    monthDataTime_develop.Add(new DeveloperData()
-                    //    {
-                    //        name = developer.Key,
-                    //        value = developTotalTime
-                    //    });
-
-                    //    #endregion
-                    //}
+                        #region Develop time
+                        monthDataTime_develop.Add(new DeveloperData
+                        {
+                            name = developer.Key,
+                            value = developTickets.Sum(ticket => int.Parse(ticket.TicketTime))
+                        });
+                        #endregion
+                    }
                     #endregion
 
                     #endregion
