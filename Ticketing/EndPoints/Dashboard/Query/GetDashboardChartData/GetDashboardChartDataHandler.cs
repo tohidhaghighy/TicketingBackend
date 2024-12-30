@@ -14,56 +14,39 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
             {
                 try
                 {
-                    #region RequestType == Develop Tickets
-                    var developInRFPTotal = await ticketService.ListAsync(a => a.IsSchedule == IsSchedule.yes);
-                    var developInRFPTotalTickets = new List<Domain.Entities.Ticket>();
-                    developInRFPTotalTickets = developInRFPTotal.Where(a => 
-                                                                           a.StatusId == (int)StatusId.inLine ||
+                    #region Develop in RFB
+                    var developInRFPTicket = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Develop &&
+                                                                           a.IsSchedule == IsSchedule.yes &&
+                                                                          (a.StatusId == (int)StatusId.inLine ||
                                                                            a.StatusId == (int)StatusId.inProgress ||
                                                                            a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                                           a.StatusId == (int)StatusId.done).ToList();
+                                                                           a.StatusId == (int)StatusId.done));
 
-                    var developInRFPDone = await ticketService.ListAsync(a => a.IsSchedule == IsSchedule.yes);
-                    var developInRFPDoneTicket = new List<Domain.Entities.Ticket>();
-                    developInRFPDoneTicket = developInRFPDone.Where(a =>
-                                                                         a.IsSchedule == IsSchedule.yes &&
-                                                                         a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                                         a.StatusId == (int)StatusId.done).ToList();
-
-                    var developOutRFPTotal = await ticketService.ListAsync(a => a.IsSchedule == IsSchedule.no);
-                    var developOutRFPTotalTickets = new List<Domain.Entities.Ticket>();
-                    developOutRFPTotalTickets = developOutRFPTotal.Where(a =>
-                                                                        a.StatusId == (int)StatusId.inLine ||
-                                                                        a.StatusId == (int)StatusId.inProgress ||
-                                                                        a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                                        a.StatusId == (int)StatusId.done).ToList();
-
-                    var developOutRFPDone = await ticketService.ListAsync(a => a.IsSchedule == IsSchedule.no);
-                    var developOutRFPDoneTickets = new List<Domain.Entities.Ticket>();
-                    developOutRFPDoneTickets = developOutRFPDone.Where(a =>
-                                                                      a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                                      a.StatusId == (int)StatusId.done).ToList();
+                    var developInRFPDoneTicket = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Develop &&
+                                                                               a.IsSchedule == IsSchedule.yes &&
+                                                                              (a.StatusId == (int)StatusId.awaitingConfirmation ||
+                                                                               a.StatusId == (int)StatusId.done));
                     #endregion
 
-                    #region RequestType == Support Tickets
+                    #region Develop out RFB
+                    var developOutRFPTicket = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Develop &&
+                                                                            a.IsSchedule == IsSchedule.no &
+                                                                           (a.StatusId == (int)StatusId.inLine ||
+                                                                            a.StatusId == (int)StatusId.inProgress ||
+                                                                            a.StatusId == (int)StatusId.awaitingConfirmation ||
+                                                                            a.StatusId == (int)StatusId.done));
+
+                    var developOutRFPDoneTickets = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Develop &&
+                                                                                 a.IsSchedule == IsSchedule.no &&
+                                                                                (a.StatusId == (int)StatusId.awaitingConfirmation ||
+                                                                                 a.StatusId == (int)StatusId.done));
+                    #endregion
+
+                    #region Support Tickets
                     // TODO: Change it to dynamic value 
                     int CompanyCommitmentToSupportTime = 1160;
-                    var Support= await ticketService.ListAsync(a => a.IsSchedule == IsSchedule.Support);
-                    var SupportTicket = new List<Domain.Entities.Ticket>();
-                    SupportTicket = Support.Where(a =>
-                                                  a.StatusId == (int)StatusId.awaitingConfirmation ||
-                                                  a.StatusId == (int)StatusId.awaitingRejecting ||
-                                                  a.StatusId == (int)StatusId.done ||
-                                                  a.StatusId == (int)StatusId.rejected).ToList();
-
-                    #endregion
-
-                    #region Developer Tickets
-                    var AllTickets = await ticketService.ListAsync(null);
-
-                    var developers = Enum.GetValues(typeof(Developer)).Cast<Developer>()
-                                     .Where(dev => dev != Developer.all && dev != Developer.unknown)
-                                     .ToDictionary(dev => dev.ToString(), dev => AllTickets.Where(a => a.DeveloperId == dev));
+                    var SupportTicket = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Support &&
+                                                                      a.ProcessEndDateTime != null);
                     #endregion
 
                     //~~~~~~~~~~~~~~~~~~~~~~~~Return~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -84,15 +67,15 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                         developResultYearInRFP.Add(new DevelopResultYear
                         {
                             Month = GetMonth(i),
-                            Total = developInRFPTotalTickets.Count(a => p.GetMonth(a.InsertDate) == i),
-                            Done = developInRFPDoneTicket.Count(a => p.GetMonth(a.InsertDate) == i)
+                            Total = developInRFPTicket.Count(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == i),
+                            Done = developInRFPDoneTicket.Count(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == i)
                         });
 
                         developResultYearOutRFP.Add(new DevelopResultYear
                         {
                             Month = GetMonth(i),
-                            Total = developOutRFPTotalTickets.Count(a => p.GetMonth(a.InsertDate) == i),
-                            Done = developOutRFPDoneTickets.Count(a => p.GetMonth(a.InsertDate) == i)
+                            Total = developOutRFPTicket.Count(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == i),
+                            Done = developOutRFPDoneTickets.Count(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == i)
                         });
                     }
                     #endregion
@@ -100,11 +83,11 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                     #region support year result
                     for (var i = 1; i < 13; i++)
                     {
-                        var tickets = SupportTicket.Where(a => p.GetMonth(a.InsertDate) == i);
+                        var tickets = SupportTicket.Where(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == i);
                         var totalTime = 0;
-                        foreach(var ticket in tickets)
+                        foreach (var ticket in tickets)
                         {
-                            if(int.TryParse(ticket.TicketTime, out var time))
+                            if (int.TryParse(ticket.TicketTime, out var time))
                             {
                                 totalTime += time;
                             }
@@ -118,60 +101,80 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                     }
                     #endregion
 
-                    #region Developer Data year result
+                    #region Developer month result
+
+                    #region List of developers
+                    var developers = new Dictionary<string, Developer>
+                    {
+                         { "p_rezayeh", Developer.p_rezayeh },
+                         { "m_bagheri", Developer.m_bagheri },
+                         { "t_hagigi", Developer.t_hagigi },
+                         { "m_borji", Developer.m_borji },
+                         { "m_salehi", Developer.m_salehi },
+                         { "Sh_kazempour", Developer.Sh_kazempour },
+                         { "e_darvishi", Developer.e_darvishi },
+                         { "s_mohamadzadeh", Developer.s_mohamadzadeh }
+                    };
+                    #endregion
+
+                    #region Initialize result lists
                     var monthDataCount_support = new List<DeveloperData>();
                     var monthDataTime_support = new List<DeveloperData>();
-
                     var monthDataCount_develop = new List<DeveloperData>();
                     var monthDataTime_develop = new List<DeveloperData>();
+                    #endregion
 
+                    #region Fetch tickets and process data
                     foreach (var developer in developers)
                     {
-                        var tickets = developer.Value.Where(a => p.GetMonth(a.InsertDate) == request.monthId);
+                        #region Find ticket
+                        var tickets = await ticketService.ListAsync(a =>
+                            a.DeveloperId == developer.Value &&
+                            (a.StatusId == (int)StatusId.awaitingConfirmation || a.StatusId == (int)StatusId.done));
 
-                        var supportTickets = developer.Value.Where(a => p.GetMonth(a.InsertDate) == request.monthId && a.RequestTypeId == RequestType.Support);
-                        var developTickets = developer.Value.Where(a => p.GetMonth(a.InsertDate) == request.monthId && a.RequestTypeId == RequestType.Develop);
+                        var supportTickets = tickets.Where(a =>
+                            p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId &&
+                            a.RequestTypeId == RequestType.Support);
 
-                        monthDataCount_support.Add(new DeveloperData()
+                        var developTickets = tickets.Where(a =>
+                            p.GetMonth((DateTime)a.ProcessEndDateTime) == request.monthId &&
+                            a.RequestTypeId == RequestType.Develop);
+                        #endregion
+
+                        #region Support count
+                        monthDataCount_support.Add(new DeveloperData
                         {
                             name = developer.Key,
-                            value = tickets.Count()
+                            value = supportTickets.Count()
                         });
+                        #endregion
 
-                        int supportTotalTime = 0;
-                        foreach (var ticket in supportTickets)
-                        {
-                            if (int.TryParse(ticket.TicketTime, out var time))
-                            {
-                                supportTotalTime += time;
-                            }
-                        }
-                        monthDataTime_support.Add(new DeveloperData()
+                        #region Support time
+                        monthDataTime_support.Add(new DeveloperData
                         {
                             name = developer.Key,
-                            value = supportTotalTime
+                            value = supportTickets.Sum(ticket => int.Parse(ticket.TicketTime))
                         });
-                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-                        monthDataCount_develop.Add(new DeveloperData()
-                        {
-                            name = developer.Key,
-                            value = tickets.Count()
-                        });
+                        #endregion
 
-                        int developTotalTime = 0;
-                        foreach (var ticket in developTickets)
-                        {
-                            if (int.TryParse(ticket.TicketTime, out var time))
-                            {
-                                developTotalTime += time;
-                            }
-                        }
-                        monthDataTime_develop.Add(new DeveloperData()
+                        #region Develop count
+                        monthDataCount_develop.Add(new DeveloperData
                         {
                             name = developer.Key,
-                            value = developTotalTime
+                            value = developTickets.Count()
                         });
+                        #endregion
+
+                        #region Develop time
+                        monthDataTime_develop.Add(new DeveloperData
+                        {
+                            name = developer.Key,
+                            value = developTickets.Sum(ticket => int.Parse(ticket.TicketTime))
+                        });
+                        #endregion
                     }
+                    #endregion
+
                     #endregion
 
                     #region result
