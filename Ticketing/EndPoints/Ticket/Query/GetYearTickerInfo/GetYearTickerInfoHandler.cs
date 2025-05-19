@@ -34,6 +34,11 @@ public class GetYearTickerInfoHandler
                 {
                     result = await ticketService.ListAsync(a => ((a.UserId == request.UserId) || a.CurrentRoleId == request.RoleId) && (int)a.RequestTypeId == request.RequestTypeId);
                 }
+                result = request.Date switch
+                {
+                    1403 => result.Where(a => (a.InsertDate >= new DateTime(2024, 3, 20) && a.InsertDate <= new DateTime(2025, 3, 20))).ToList(),
+                    1404 => result.Where(a => (a.InsertDate >= new DateTime(2025, 3, 21) && a.InsertDate <= new DateTime(2026, 3, 20))).ToList(),
+                };
 
                 for (var i = 1; i < 13; i++)
                 {

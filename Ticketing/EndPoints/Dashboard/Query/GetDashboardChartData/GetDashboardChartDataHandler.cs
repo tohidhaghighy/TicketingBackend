@@ -22,7 +22,7 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                                                                            a.StatusId == (int)StatusId.awaitingConfirmation ||
                                                                            a.StatusId == (int)StatusId.done));
 
-                    var developInRFPDoneTicket = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Develop &&
+                    var developInRFPDoneTicket = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Develop && a.ProcessEndDateTime!=null &&
                                                                                a.IsSchedule == IsSchedule.yes &&
                                                                               (a.StatusId == (int)StatusId.awaitingConfirmation ||
                                                                                a.StatusId == (int)StatusId.done));
@@ -36,7 +36,7 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                                                                             a.StatusId == (int)StatusId.awaitingConfirmation ||
                                                                             a.StatusId == (int)StatusId.done));
 
-                    var developOutRFPDoneTickets = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Develop &&
+                    var developOutRFPDoneTickets = await ticketService.ListAsync(a => a.RequestTypeId == RequestType.Develop && a.ProcessEndDateTime != null &&
                                                                                  a.IsSchedule == IsSchedule.no &&
                                                                                 (a.StatusId == (int)StatusId.awaitingConfirmation ||
                                                                                  a.StatusId == (int)StatusId.done));
@@ -67,14 +67,14 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                         developResultYearInRFP.Add(new DevelopResultYear
                         {
                             Month = GetMonth(i),
-                            Total = developInRFPTicket.Count(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == i),
+                            Total = developInRFPTicket.Count(a => p.GetMonth((DateTime)a.LastChangeDatetime) == i),
                             Done = developInRFPDoneTicket.Count(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == i)
                         });
 
                         developResultYearOutRFP.Add(new DevelopResultYear
                         {
                             Month = GetMonth(i),
-                            Total = developOutRFPTicket.Count(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == i),
+                            Total = developOutRFPTicket.Count(a => p.GetMonth((DateTime)a.LastChangeDatetime) == i),
                             Done = developOutRFPDoneTickets.Count(a => p.GetMonth((DateTime)a.ProcessEndDateTime) == i)
                         });
                     }
