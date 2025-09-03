@@ -3,6 +3,7 @@ using System.Globalization;
 using Ticketing.Application.Service.Stauts;
 using Ticketing.Domain.Contracts;
 using Ticketing.Domain.Entities;
+using Ticketing.Domain.Enums;
 using Ticketing.EndPoints.Ticket.DTOs;
 using Ticketing.EndPoints.Ticket.Query.GetYearTickerInfo;
 
@@ -20,15 +21,10 @@ public class GetYearTickerInfoHandler
                 var doingList = new List<int>();
                 var resultyear = new List<MonthTicketItem>();
                 var p = new PersianCalendar();
-                var result = await ticketService.ListAsync(a => (a.UserId == request.UserId) ||
-                                                                                    a.CurrentRoleId == request.RoleId);
-                if (request.RoleId == 4)
+                var result = await ticketService.ListAsync(a => (a.UserId == request.UserId) || a.CurrentRoleId == request.RoleId);
+                if (request.RoleId == (int)Role.adminitm)
                 {
                      result = await ticketService.ListAsync(a => (int)a.RequestTypeId == request.RequestTypeId);
-                }
-                else if (request.RoleId == 5)
-                {
-                    result = await ticketService.ListAsync(a => (a.StatusId != 2 || a.UserId == request.UserId) && (int)a.RequestTypeId == request.RequestTypeId);
                 }
                 else
                 {

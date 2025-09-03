@@ -1,5 +1,6 @@
 using MediatR;
 using Ticketing.Domain.Contracts;
+using Ticketing.Domain.Enums;
 
 namespace Ticketing.EndPoints.Ticket.Query.GetGroupTicketInfo;
 
@@ -14,33 +15,26 @@ public class GetRoleTicketInfoHandler
                 var listtickets = await ticketService.ListAsync(a => a.CurrentRoleId == request.RoleId || a.UserId == request.UserId);
                 var inProgresCount = 0;
 
-                if (request.RoleId == 4)
+                if (request.RoleId == (int)Role.adminitm)
                 {
                     listtickets = await ticketService.ListAsync(a => (int)a.RequestTypeId == request.RequestTypeId);
-                    inProgresCount = listtickets.Where(a => a.StatusId == 8).Count();
-                }
-                else if (request.RoleId == 5)
-                {
-                    listtickets = await ticketService.ListAsync(a => (a.StatusId != 2 || a.UserId == request.UserId) && (int)a.RequestTypeId == request.RequestTypeId);
-                    inProgresCount = listtickets.Where(a => a.StatusId == 8).Count();
                 }
                 else
                 {
                     listtickets = await ticketService.ListAsync(a => (a.UserId == request.UserId || a.CurrentRoleId == request.RoleId) && (int)a.RequestTypeId == request.RequestTypeId);
-                    inProgresCount = listtickets.Where(a => a.StatusId != 1 && a.StatusId != 2 && a.StatusId != 4).Count();
                 }
 
                 return new
                 {
-                    done = listtickets.Where(a => a.StatusId == 1).Count(),
-                    inserted = listtickets.Where(a => a.StatusId == 2).Count(),
-                    sendtovira = listtickets.Where(a => a.StatusId == 3).Count(),
-                    rejected = listtickets.Where(a => a.StatusId == 4).Count(),
-                    sendtotaz = listtickets.Where(a => a.StatusId == 5).Count(),
-                    awaitingConfirmation = listtickets.Where(a => a.StatusId == 6).Count(),
-                    inLine = listtickets.Where(a => a.StatusId == 7).Count(),
-                    inProgress = inProgresCount,
-                    awaitingRejecting = listtickets.Where(a => a.StatusId == 9).Count(),
+                    done = listtickets.Where(a => a.StatusId == (int)StatusId.done).Count(),
+                    inserted = listtickets.Where(a => a.StatusId == (int)StatusId.inserted).Count(),
+                    sendtovira = listtickets.Where(a => a.StatusId == (int)StatusId.sendtovira).Count(),
+                    rejected = listtickets.Where(a => a.StatusId == (int)StatusId.rejected).Count(),
+                    sendtotaz = listtickets.Where(a => a.StatusId == (int)StatusId.sendtotaz).Count(),
+                    awaitingConfirmation = listtickets.Where(a => a.StatusId == (int)StatusId.awaitingConfirmation).Count(),
+                    inLine = listtickets.Where(a => a.StatusId == (int)StatusId.inLine).Count(),
+                    inProgress = listtickets.Where(a => a.StatusId == (int)StatusId.inProgress).Count(),
+                    awaitingRejecting = listtickets.Where(a => a.StatusId == (int)StatusId.awaitingRejecting).Count(),
                     total = listtickets.Count()
                 };
             }

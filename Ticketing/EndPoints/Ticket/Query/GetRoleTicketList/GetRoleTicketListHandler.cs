@@ -14,23 +14,19 @@ public class GetRoleTicketListHandler
                 var result = new List<Domain.Entities.Ticket>();
                 var liststatus = await statusService.ListAsync(null);
                 var listProject = await projectService.ListAsync(null);
-                if (request.RoleId == (int)Role.adminTaz)
+                if (request.RoleId == (int)Role.adminitm)
                 {
                     result = await ticketService.ListAsync(a => (a.StatusId == request.Status && (int)a.RequestTypeId == request.RequestTypeId));
                 }
-                else if (request.RoleId == (int)Role.adminVira)
-                {
-                    result = await ticketService.ListAsync(a => (a.StatusId == request.Status && (int)a.RequestTypeId == request.RequestTypeId && (a.StatusId != 2 || a.UserId == request.UserId)));
-                }
                 else
                 {
-                    if (request.Status == 8)
+                    if (request.Status == (int)StatusId.inProgress)
                     {
 
                         result = await ticketService.ListAsync(a => (a.CurrentRoleId == request.RoleId &&
-                                                                                        (a.StatusId != 1 && a.StatusId != 2 && a.StatusId != 4)) ||
+                                                                                        (a.StatusId != (int)StatusId.done && a.StatusId != (int)StatusId.inserted && a.StatusId != (int)StatusId.rejected)) ||
                                                                                         (a.UserId == request.UserId &&
-                                                                                        (a.StatusId != 1 && a.StatusId != 2 && a.StatusId != 4)) &&
+                                                                                        (a.StatusId != (int)StatusId.done && a.StatusId != (int)StatusId.inserted && a.StatusId != (int)StatusId.rejected)) &&
                                                                                         (int)a.RequestTypeId == request.RequestTypeId);
                     }
                     else
@@ -62,7 +58,7 @@ public class GetRoleTicketListHandler
                     CurrentRoleId = x.CurrentRoleId,
                     RequestType = x.RequestTypeId,
                     TicketTime = x.TicketTime ?? "0",
-                    DeveloperId = x.DeveloperId != 0 ? x.DeveloperId : Developer.unknown,
+                    DeveloperId = x.DeveloperId != Developer.all ? x.DeveloperId : Developer.unknown,
                 });
             }
             catch (Exception ex)
