@@ -23,7 +23,7 @@ public class Ticket : BaseEntity<int>
     public RequestType? RequestTypeId { get; set; }
     public DateTime? LastChangeDatetime { get; set; }
     public string? TicketTime { get; set; }
-    public Developer DeveloperId { get; set; }
+    public Ticketing.Domain.Enums.Developer DeveloperId { get; set; }
     public DateTime? ProcessEndDateTime { get; set; }
     public IsSchedule IsSchedule { get; set; }
 }

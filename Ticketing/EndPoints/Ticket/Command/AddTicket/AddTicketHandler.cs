@@ -39,7 +39,7 @@ public class AddTicketHandler
                 }
 
                 #region Find project RoleId
-                var roleInfo = await projectRoleService.GetAsync(a => a.ProjectId == request.ProjectId && a.RoleId != (int)Role.adminitm && a.RoleId != (int)Role.normalUser);
+                var roleInfo = await projectRoleService.GetAsync(a => a.ProjectId == request.ProjectId && a.RoleId != (int)Role.admindir && a.RoleId != (int)Role.normalUser);
                 #endregion
 
                 var result = await ticketService.AddAsync(new Domain.Entities.Ticket()
@@ -63,7 +63,7 @@ public class AddTicketHandler
                                persiandate.GetMonth(DateTime.Now).ToString() +
                                persiandate.GetDayOfMonth(DateTime.Now).ToString() +
                                rowNumber.Value.ToString("000#"),
-                    DeveloperId = Developer.unknown,
+                    DeveloperId = Ticketing.Domain.Enums.Developer.unknown,
                     IsSchedule = request.IsSchedule.Value,
                 });
 

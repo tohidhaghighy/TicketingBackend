@@ -1,6 +1,7 @@
 using System.Reflection;
 using Carter;
 using Microsoft.EntityFrameworkCore;
+using Ticketing.Application.Service.Developer;
 using Ticketing.Application.Service.Massage;
 using Ticketing.Application.Service.Project;
 using Ticketing.Application.Service.Stauts;
@@ -34,6 +35,7 @@ builder.Services.AddScoped<IProjectRoleService, ProjectRoleService>();
 builder.Services.AddScoped<IMassageService, MassageService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketFlowService, TicketFlowService>();
+builder.Services.AddScoped<IDeveloperService, DeveloperService>();
 builder.Services.AddSingleton<IExport, ExportService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddLogging(loggingBuilder =>

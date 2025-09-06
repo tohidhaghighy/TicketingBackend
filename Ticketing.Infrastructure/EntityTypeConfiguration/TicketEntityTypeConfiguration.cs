@@ -21,6 +21,9 @@ public class TicketEntityTypeConfiguration: IEntityTypeConfiguration<Ticket>
         builder.HasOne<Status>()
             .WithMany()
             .HasForeignKey(ticket => ticket.StatusId);
+        builder.HasOne<Developer>()
+            .WithMany()
+            .HasForeignKey(ticket => ticket.DeveloperId);
         builder.Property(b => b.Text)
             .HasColumnType("nvarchar(max)");
         builder.Property(b => b.Title)

@@ -15,7 +15,7 @@ public class GetRoleTicketInfoHandler
                 var listtickets = await ticketService.ListAsync(a => a.CurrentRoleId == request.RoleId || a.UserId == request.UserId);
                 var inProgresCount = 0;
 
-                if (request.RoleId == (int)Role.adminitm)
+                if (request.RoleId == (int)Role.admindir)
                 {
                     listtickets = await ticketService.ListAsync(a => (int)a.RequestTypeId == request.RequestTypeId);
                 }

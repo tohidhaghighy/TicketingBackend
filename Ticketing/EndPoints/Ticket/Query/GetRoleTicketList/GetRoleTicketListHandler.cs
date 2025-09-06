@@ -14,7 +14,7 @@ public class GetRoleTicketListHandler
                 var result = new List<Domain.Entities.Ticket>();
                 var liststatus = await statusService.ListAsync(null);
                 var listProject = await projectService.ListAsync(null);
-                if (request.RoleId == (int)Role.adminitm)
+                if (request.RoleId == (int)Role.admindir)
                 {
                     result = await ticketService.ListAsync(a => (a.StatusId == request.Status && (int)a.RequestTypeId == request.RequestTypeId));
                 }
@@ -58,7 +58,7 @@ public class GetRoleTicketListHandler
                     CurrentRoleId = x.CurrentRoleId,
                     RequestType = x.RequestTypeId,
                     TicketTime = x.TicketTime ?? "0",
-                    DeveloperId = x.DeveloperId != Developer.all ? x.DeveloperId : Developer.unknown,
+                    DeveloperId = x.DeveloperId != Ticketing.Domain.Enums.Developer.all ? x.DeveloperId : Ticketing.Domain.Enums.Developer.unknown,
                 });
             }
             catch (Exception ex)

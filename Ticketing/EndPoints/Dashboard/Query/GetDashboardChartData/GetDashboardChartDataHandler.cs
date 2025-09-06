@@ -104,16 +104,16 @@ namespace Ticketing.EndPoints.Dashboard.Query.GetDashboardChartData
                     #region Developer month result
 
                     #region List of developers
-                    var developers = new Dictionary<string, Developer>
+                    var developers = new Dictionary<string, Ticketing.Domain.Enums.Developer>
                     {
-                         { "p_rezayeh", Developer.p_rezayeh },
-                         { "m_bagheri", Developer.m_bagheri },
-                         { "t_hagigi", Developer.t_hagigi },
-                         { "m_borji", Developer.m_borji },
-                         { "m_salehi", Developer.m_salehi },
-                         { "Sh_kazempour", Developer.Sh_kazempour },
-                         { "e_darvishi", Developer.e_darvishi },
-                         { "s_mohamadzadeh", Developer.s_mohamadzadeh }
+                         { "p_rezayeh", Ticketing.Domain.Enums.Developer.p_rezayeh },
+                         { "m_bagheri", Ticketing.Domain.Enums.Developer.m_bagheri },
+                         { "t_hagigi", Ticketing.Domain.Enums.Developer.t_hagigi },
+                         { "m_borji", Ticketing.Domain.Enums.Developer.m_borji },
+                         { "m_salehi", Ticketing.Domain.Enums.Developer.m_salehi },
+                         { "Sh_kazempour", Ticketing.Domain.Enums.Developer.Sh_kazempour },
+                         { "e_darvishi", Ticketing.Domain.Enums.Developer.e_darvishi },
+                         { "s_mohamadzadeh", Ticketing.Domain.Enums.Developer.s_mohamadzadeh }
                     };
                     #endregion
 
