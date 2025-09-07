@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Ticketing.Domain.Contracts;
+using Ticketing.Domain.Enums;
 
 namespace Ticketing.EndPoints.Developer.Query.GetDeveloperListByRoleId
 {
@@ -14,7 +15,15 @@ namespace Ticketing.EndPoints.Developer.Query.GetDeveloperListByRoleId
             {
                 try
                 {
-                    var developerList = await developerService.ListAsync(a => a.RoleId == request.RoleId);
+                    var developerList = await developerService.ListAsync(null);
+                    if (request.RoleId == (int)Role.admindir || request.RoleId == (int)Role.TicketingAdmin)
+                    {
+                        developerList = await developerService.ListAsync(null);
+                    }
+                    else
+                    {
+                        developerList = await developerService.ListAsync(a => a.RoleId == request.RoleId);
+                    }
                     return developerList;
                 }
                 catch (Exception ex)

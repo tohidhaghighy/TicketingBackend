@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using Ticketing.Domain.Contracts;
+using Ticketing.Domain.Entities;
 using Ticketing.Infrastructure.Database;
 
 namespace Ticketing.Application.Service.Developer

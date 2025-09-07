@@ -14,31 +14,17 @@ public class GetRoleTicketListHandler
                 var result = new List<Domain.Entities.Ticket>();
                 var liststatus = await statusService.ListAsync(null);
                 var listProject = await projectService.ListAsync(null);
-                if (request.RoleId == (int)Role.admindir)
+                if (request.RoleId == (int)Role.admindir || request.RoleId == (int)Role.TicketingAdmin)
                 {
                     result = await ticketService.ListAsync(a => (a.StatusId == request.Status && (int)a.RequestTypeId == request.RequestTypeId));
                 }
                 else
                 {
-                    if (request.Status == (int)StatusId.inProgress)
-                    {
-
-                        result = await ticketService.ListAsync(a => (a.CurrentRoleId == request.RoleId &&
-                                                                                        (a.StatusId != (int)StatusId.done && a.StatusId != (int)StatusId.inserted && a.StatusId != (int)StatusId.rejected)) ||
-                                                                                        (a.UserId == request.UserId &&
-                                                                                        (a.StatusId != (int)StatusId.done && a.StatusId != (int)StatusId.inserted && a.StatusId != (int)StatusId.rejected)) &&
-                                                                                        (int)a.RequestTypeId == request.RequestTypeId);
-                    }
-                    else
-                    {
-
-                        result = await ticketService.ListAsync(a => (a.CurrentRoleId == request.RoleId &&
+                    result = await ticketService.ListAsync(a => (a.CurrentRoleId == request.RoleId &&
                                                                                         a.StatusId == request.Status) ||
                                                                                         (a.UserId == request.UserId &&
                                                                                         a.StatusId == request.Status) &&
                                                                                         (int)a.RequestTypeId == request.RequestTypeId);
-
-                    }
                 }
 
                 var persiandate = new System.Globalization.PersianCalendar();
@@ -59,6 +45,7 @@ public class GetRoleTicketListHandler
                     RequestType = x.RequestTypeId,
                     TicketTime = x.TicketTime ?? "0",
                     DeveloperId = x.DeveloperId != Ticketing.Domain.Enums.Developer.all ? x.DeveloperId : Ticketing.Domain.Enums.Developer.unknown,
+                    userId = x.UserId,
                 });
             }
             catch (Exception ex)

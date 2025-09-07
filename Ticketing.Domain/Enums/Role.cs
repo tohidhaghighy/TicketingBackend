@@ -7,6 +7,7 @@
         adminina = 4, //معاون زیرساخت، شبکه و امنیت
         adminita = 5, //معاون فناوری اطلاعات
         normalUser = 6, //کاربر عادی
-        all =0
+        TicketingAdmin = 9, //ادمین سامانه
+        all = 0
     }
 }

@@ -51,17 +51,31 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                 switch (projectId)
                 {
                     case 1:
-                        return "سامانه مدیریت پرونده ها";
+                        return "خط MPLS استان";
                     case 2:
-                        return "سامانه میز خدمت";
+                        return "خط APN شهرستان";
                     case 3:
-                        return "سامانه امحا";
+                        return "دسترسی های فایروال";
                     case 4:
-                        return "سامانه تبادل اطلاعات";
+                        return "VDI استان";
                     case 5:
-                        return "سامانه هوش تجاری";
+                        return "Active Directory";
                     case 6:
-                        return "زیر ساخت";
+                        return "آنتی ویروس";
+                    case 7:
+                        return "حوزه امنیت";
+                    case 8:
+                        return "دسترسی شبکه ای به سامانه ها";
+                    case 9:
+                        return " مدیریت پرونده ها (CMS)";
+                    case 10:
+                        return "آمار و داشبورد";
+                    case 11:
+                        return "سامانه قاچاق";
+                    case 12:
+                        return "سامانه امحاء";
+                    case 13:
+                        return "اتوماسیون اداری";
                 }
                 return "تعریف نشده";
             }
@@ -101,6 +115,43 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         return "-";
                 }
                 return "تعریف نشده";
+            }
+            private string deverloperReturn(object developerId)
+            {
+                switch (developerId)
+                {
+                    case Domain.Enums.Developer.eslamifar:
+                        return "آقای اسلامی فر";
+                    case Domain.Enums.Developer.njar:
+                        return "آقای نجار";
+                    case Domain.Enums.Developer.anvary:
+                        return "آقای انوری";
+                    case Domain.Enums.Developer.torabuzadeh:
+                        return "آقای ترابی زاده";
+                    case Domain.Enums.Developer.shaki:
+                        return "آقای شاکی";
+                    case Domain.Enums.Developer.adibnia:
+                        return "آقای ادیب نیا";
+                    case Domain.Enums.Developer.ebrahimi:
+                        return "خانم ابراهیمی";
+                    case Domain.Enums.Developer.sartipzadeh:
+                        return "خانم سرتیپ زاده";
+                    case Domain.Enums.Developer.nagibi:
+                        return "خانم نقیبی";
+                    case Domain.Enums.Developer.davodi:
+                        return "آقای داودی";
+                    case Domain.Enums.Developer.nadafi:
+                        return "آقای ندافی";
+                    case Domain.Enums.Developer.mahmodKhani:
+                        return "آقای محمودخانی";
+                    case Domain.Enums.Developer.raeisi:
+                        return "خانم رئیسی";
+                    case Domain.Enums.Developer.ahangar:
+                        return "خانم آهنگران";
+                    case Domain.Enums.Developer.moshfegi:
+                        return "خانم مشفقی";
+                }
+                return "ثبت نشده";
             }
             #endregion
 
@@ -228,7 +279,7 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         new CellInfo() {Text = x.Title ,DynamicWidth=true},
                         new CellInfo() {Text = projectRturn(x.ProjectId) ,DynamicWidth=true}, //x.ProjectId.ToString()
                         new CellInfo() {Text = statusRturn(x.StatusId) ,DynamicWidth=true},
-                        new CellInfo() {Text = x.DeveloperId.ToString() ,DynamicWidth=true},
+                        new CellInfo() {Text = deverloperReturn(x.DeveloperId) ,DynamicWidth=true},
                         new CellInfo() {Text = (x.TicketTime==null?"0":x.TicketTime) ,DynamicWidth=true},
                         new CellInfo() {Text = x.ProcessEndDateTime == null?"ثبت نشده":
                                                new PersianCalendar().GetYear((DateTime)x.ProcessEndDateTime).ToString("D2") + "/" +

@@ -22,7 +22,7 @@ public class GetYearTickerInfoHandler
                 var resultyear = new List<MonthTicketItem>();
                 var p = new PersianCalendar();
                 var result = await ticketService.ListAsync(a => (a.UserId == request.UserId) || a.CurrentRoleId == request.RoleId);
-                if (request.RoleId == (int)Role.admindir)
+                if (request.RoleId == (int)Role.admindir || request.RoleId == (int)Role.TicketingAdmin)
                 {
                      result = await ticketService.ListAsync(a => (int)a.RequestTypeId == request.RequestTypeId);
                 }

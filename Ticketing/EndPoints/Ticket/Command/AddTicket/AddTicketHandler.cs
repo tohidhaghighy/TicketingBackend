@@ -63,8 +63,9 @@ public class AddTicketHandler
                                persiandate.GetMonth(DateTime.Now).ToString() +
                                persiandate.GetDayOfMonth(DateTime.Now).ToString() +
                                rowNumber.Value.ToString("000#"),
-                    DeveloperId = Ticketing.Domain.Enums.Developer.unknown,
+                    DeveloperId = Domain.Enums.Developer.unknown,
                     IsSchedule = request.IsSchedule.Value,
+                    TicketTime = "0"
                 });
 
                 await ticketFlowService.AddAsync(new Domain.Entities.TicketFlow()
