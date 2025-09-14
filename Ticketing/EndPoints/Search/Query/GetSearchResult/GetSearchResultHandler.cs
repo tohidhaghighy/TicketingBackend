@@ -22,7 +22,6 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
 
                     #region Multi selected items
                     var InsertedRoleId = request.InsertedRoleId.IsNullOrEmpty() ? null : request.InsertedRoleId.ConvertStringToListIntiger();
-                    var CurrentRoleId = request.CurrentRoleId.IsNullOrEmpty() ? null : request.CurrentRoleId.ConvertStringToListIntiger();
                     var StatusId = request.StatusId.IsNullOrEmpty() ? null : request.StatusId.ConvertStringToListIntiger();
                     var ProjectId = request.ProjectId.IsNullOrEmpty() ? null : request.ProjectId.ConvertStringToListIntiger();
                     var RequestType = request.RequestType.IsNullOrEmpty() ? null : request.RequestType.ConvertStringToListIntiger();
@@ -47,11 +46,10 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                                                               (request.Title.IsNullOrEmpty() || a.Title.Contains(request.Title)) &&
                                                               (request.Username.IsNullOrEmpty() || a.Username.Contains(request.Username)) &&
                                                               (request.InsertedRoleId.IsNullOrEmpty() || InsertedRoleId.Contains(a.InsertedRoleId)) &&
-                                                              (request.CurrentRoleId.IsNullOrEmpty() || CurrentRoleId.Contains(a.CurrentRoleId)) &&
                                                               (request.StatusId.IsNullOrEmpty() || StatusId.Contains(a.StatusId)) &&
                                                               (request.ProjectId.IsNullOrEmpty() || ProjectId.Contains(a.ProjectId)) &&
                                                               (request.RequestType.IsNullOrEmpty() || RequestType.Contains((int)a.RequestTypeId)) &&
-                                                              (request.DeveloperId.IsNullOrEmpty() || DeveloperId.Contains((int)a.DeveloperId)) &&
+                                                              (request.DeveloperId.IsNullOrEmpty() || DeveloperId.Contains(a.AssignUserId ?? 0)) &&
                                                               (request.IsSchadule.IsNullOrEmpty() || IsSchadule.Contains((int)a.IsSchedule)) &&
                                                               (!request.InsertStartDateTime.HasValue || a.InsertDate >= request.InsertStartDateTime) &&
                                                               (!request.InsertEndDateTime.HasValue || a.InsertDate <= request.InsertEndDateTime) &&
@@ -65,11 +63,10 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                                                               (request.Title.IsNullOrEmpty() || a.Title.Contains(request.Title)) &&
                                                               (request.Username.IsNullOrEmpty() || a.Username.Contains(request.Username)) &&
                                                               (request.InsertedRoleId.IsNullOrEmpty() || InsertedRoleId.Contains(a.InsertedRoleId)) &&
-                                                              (request.CurrentRoleId.IsNullOrEmpty() || CurrentRoleId.Contains(a.CurrentRoleId)) &&
                                                               (request.StatusId.IsNullOrEmpty() || StatusId.Contains(a.StatusId)) &&
                                                               (request.ProjectId.IsNullOrEmpty() || ProjectId.Contains(a.ProjectId)) &&
                                                               (request.RequestType.IsNullOrEmpty() || RequestType.Contains((int)a.RequestTypeId)) &&
-                                                              (request.DeveloperId.IsNullOrEmpty() || DeveloperId.Contains((int)a.DeveloperId)) &&
+                                                              (request.DeveloperId.IsNullOrEmpty() || DeveloperId.Contains(a.AssignUserId ?? 0)) &&
                                                               (request.IsSchadule.IsNullOrEmpty() || IsSchadule.Contains((int)a.IsSchedule)) &&
                                                               (!request.InsertStartDateTime.HasValue || a.InsertDate >= request.InsertStartDateTime) &&
                                                               (!request.InsertEndDateTime.HasValue || a.InsertDate <= request.InsertEndDateTime) &&
@@ -97,7 +94,7 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
                         CurrentRoleId = x.CurrentRoleId,
                         RequestType = x.RequestTypeId,
                         TicketTime = x.TicketTime ?? "0",
-                        DeveloperId = x.DeveloperId,
+                        AssignUserName = x.AssignUserName,
                         IsSchedule = x.IsSchedule
                     });
                     #endregion

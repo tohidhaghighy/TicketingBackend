@@ -10,7 +10,6 @@ namespace Ticketing.EndPoints.Search.Query.GetSearchResult
         public string Title { get; set; } = "";  //متن تیکت null
         public string InsertedRoleId { get; set; }  //رول شخص ثبت کننده Role.all == 0
         public string Username { get; set; } = "";  //اسم شخص ثبت کننده
-        public string CurrentRoleId { get; set; }  //تیکت الان دست کدوم رول هستش
         public string StatusId { get; set; }  //وضعیت تیکت
         public string ProjectId { get; set; }  //آیدی سامانه
         public string RequestType { get; set; }  //نوع درخواست

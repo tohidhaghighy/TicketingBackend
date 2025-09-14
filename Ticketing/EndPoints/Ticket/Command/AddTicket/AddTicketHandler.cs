@@ -63,7 +63,7 @@ public class AddTicketHandler
                                persiandate.GetMonth(DateTime.Now).ToString() +
                                persiandate.GetDayOfMonth(DateTime.Now).ToString() +
                                rowNumber.Value.ToString("000#"),
-                    DeveloperId = Domain.Enums.Developer.unknown,
+                    AssignUserId = 0,
                     IsSchedule = request.IsSchedule.Value,
                     TicketTime = "0"
                 });

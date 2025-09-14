@@ -113,5 +113,4 @@ public class TicketingDbContext : DbContext
     public DbSet<Status> Statuses { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<TicketFlow> TicketFlows { get; set; }
-    public DbSet<Developer> Developer { get; set; }
 }

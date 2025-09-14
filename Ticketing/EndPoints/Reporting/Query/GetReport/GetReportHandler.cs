@@ -116,43 +116,6 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                 }
                 return "تعریف نشده";
             }
-            private string deverloperReturn(object developerId)
-            {
-                switch (developerId)
-                {
-                    case Domain.Enums.Developer.eslamifar:
-                        return "آقای اسلامی فر";
-                    case Domain.Enums.Developer.njar:
-                        return "آقای نجار";
-                    case Domain.Enums.Developer.anvary:
-                        return "آقای انوری";
-                    case Domain.Enums.Developer.torabuzadeh:
-                        return "آقای ترابی زاده";
-                    case Domain.Enums.Developer.shaki:
-                        return "آقای شاکی";
-                    case Domain.Enums.Developer.adibnia:
-                        return "آقای ادیب نیا";
-                    case Domain.Enums.Developer.ebrahimi:
-                        return "خانم ابراهیمی";
-                    case Domain.Enums.Developer.sartipzadeh:
-                        return "خانم سرتیپ زاده";
-                    case Domain.Enums.Developer.nagibi:
-                        return "خانم نقیبی";
-                    case Domain.Enums.Developer.davodi:
-                        return "آقای داودی";
-                    case Domain.Enums.Developer.nadafi:
-                        return "آقای ندافی";
-                    case Domain.Enums.Developer.mahmodKhani:
-                        return "آقای محمودخانی";
-                    case Domain.Enums.Developer.raeisi:
-                        return "خانم رئیسی";
-                    case Domain.Enums.Developer.ahangar:
-                        return "خانم آهنگران";
-                    case Domain.Enums.Developer.moshfegi:
-                        return "خانم مشفقی";
-                }
-                return "ثبت نشده";
-            }
             #endregion
 
             public async Task<FileContentResult> Handle(GetReportQuery request, CancellationToken cancellationToken)
@@ -189,7 +152,7 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                                                           (request.Priority.IsNullOrEmpty() || Priority.Contains((int)a.Priority)) &&
                                                           (request.RequestType.IsNullOrEmpty() || RequestType.Contains((int)a.RequestTypeId)) &&
                                                           (request.StatusId.IsNullOrEmpty() || StatusId.Contains(a.StatusId)) &&
-                                                          (request.DeveloperId.IsNullOrEmpty() || DeveloperId.Contains((int)a.DeveloperId)) &&
+                                                          (request.DeveloperId.IsNullOrEmpty() || DeveloperId.Contains(a.AssignUserId ?? 0)) &&
                                                           (request.IsSchadule.IsNullOrEmpty() || IsSchadule.Contains((int)a.IsSchedule)) &&
                                                           (!request.InsertStartDateTime.HasValue || a.InsertDate >= request.InsertStartDateTime) &&
                                                           (!request.InsertEndDateTime.HasValue || a.InsertDate <= request.InsertEndDateTime) &&
@@ -279,7 +242,7 @@ namespace Ticketing.EndPoints.Reporting.Query.DownloadReport
                         new CellInfo() {Text = x.Title ,DynamicWidth=true},
                         new CellInfo() {Text = projectRturn(x.ProjectId) ,DynamicWidth=true}, //x.ProjectId.ToString()
                         new CellInfo() {Text = statusRturn(x.StatusId) ,DynamicWidth=true},
-                        new CellInfo() {Text = deverloperReturn(x.DeveloperId) ,DynamicWidth=true},
+                        new CellInfo() {Text = x.AssignUserName ,DynamicWidth=true},
                         new CellInfo() {Text = (x.TicketTime==null?"0":x.TicketTime) ,DynamicWidth=true},
                         new CellInfo() {Text = x.ProcessEndDateTime == null?"ثبت نشده":
                                                new PersianCalendar().GetYear((DateTime)x.ProcessEndDateTime).ToString("D2") + "/" +

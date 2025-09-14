@@ -20,11 +20,10 @@ public class GetRoleTicketListHandler
                 }
                 else
                 {
-                    result = await ticketService.ListAsync(a => (a.CurrentRoleId == request.RoleId &&
-                                                                                        a.StatusId == request.Status) ||
-                                                                                        (a.UserId == request.UserId &&
-                                                                                        a.StatusId == request.Status) &&
-                                                                                        (int)a.RequestTypeId == request.RequestTypeId);
+                    result = await ticketService.ListAsync(a => ((a.AssignUserId == request.UserId && a.StatusId == request.Status) || 
+                                                                 (a.CurrentRoleId == request.RoleId && a.StatusId == request.Status) ||
+                                                                 (a.UserId == request.UserId && a.StatusId == request.Status)) &&
+                                                                 (int)a.RequestTypeId == request.RequestTypeId);
                 }
 
                 var persiandate = new System.Globalization.PersianCalendar();
@@ -44,7 +43,8 @@ public class GetRoleTicketListHandler
                     CurrentRoleId = x.CurrentRoleId,
                     RequestType = x.RequestTypeId,
                     TicketTime = x.TicketTime ?? "0",
-                    DeveloperId = x.DeveloperId != Ticketing.Domain.Enums.Developer.all ? x.DeveloperId : Ticketing.Domain.Enums.Developer.unknown,
+                    AssignUserId = x.AssignUserId != (int)Ticketing.Domain.Enums.Developer.all ? x.AssignUserId : (int)Ticketing.Domain.Enums.Developer.unknown,
+                    AssignUserName = x.AssignUserName,
                     userId = x.UserId,
                 });
             }

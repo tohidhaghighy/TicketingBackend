@@ -28,7 +28,7 @@ public class GetYearTickerInfoHandler
                 }
                 else
                 {
-                    result = await ticketService.ListAsync(a => (a.UserId == request.UserId || a.CurrentRoleId == request.RoleId) && (int)a.RequestTypeId == request.RequestTypeId);
+                    result = await ticketService.ListAsync(a => (a.AssignUserId == request.UserId || a.UserId == request.UserId || a.CurrentRoleId == request.RoleId) && (int)a.RequestTypeId == request.RequestTypeId);
                 }
                 result = request.Date switch
                 {

@@ -12,7 +12,8 @@ public class DevelopedByHandler
             {
                 var ticketinfo = await ticketService.GetAsync(a => a.Id == request.TicketId);
                 ticketinfo.TicketTime = request.Time;
-                ticketinfo.DeveloperId = request.DeveloperId;
+                ticketinfo.AssignUserId = request.AssignUserId;
+                ticketinfo.AssignUserName = request.AssignUserName;
 
                 var result = await ticketService.UpdateAsync(ticketinfo);
                 return result;
