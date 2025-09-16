@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 using Ticketing.Domain.Contracts;
 using Ticketing.Domain.Enums;
 
@@ -6,7 +6,12 @@ namespace Ticketing.EndPoints.Ticket.Command.AddTicket;
 
 public class AddTicketHandler
 {
-    public class Handler(ITicketService ticketService, IProjectService projectService, ITicketFlowService ticketFlowService, IProjectRoleService projectRoleService, ILogger<AddTicketHandler> _logger)
+    public class Handler(
+        ITicketService ticketService, 
+        IProjectService projectService, 
+        ITicketFlowService ticketFlowService, 
+        IProjectRoleService projectRoleService, 
+        ILogger<AddTicketHandler> _logger)
         : IRequestHandler<AddTicketQuery, object>
     {
         public async Task<object> Handle(AddTicketQuery request, CancellationToken cancellationToken)
@@ -39,12 +44,12 @@ public class AddTicketHandler
                 }
 
                 #region Find project RoleId
-                var roleInfo = await projectRoleService.GetAsync(a => a.ProjectId == request.ProjectId && a.RoleId != (int)Role.admindir && a.RoleId != (int)Role.normalUser);
+                var relatedRoleId = await projectRoleService.GetAsync(a => a.ProjectId == request.ProjectId && a.RoleId != (int)Role.admindir && a.RoleId != (int)Role.normalUser);
                 #endregion
 
                 var result = await ticketService.AddAsync(new Domain.Entities.Ticket()
                 {
-                    CurrentRoleId = roleInfo.RoleId,
+                    CurrentRoleId = relatedRoleId.RoleId,
                     InsertedRoleId = request.RoleId,
                     Text = request.Text,
                     Title = request.Title,
@@ -68,16 +73,37 @@ public class AddTicketHandler
                     TicketTime = "0"
                 });
 
+                #region Add first TicketFlow For ticket creator
                 await ticketFlowService.AddAsync(new Domain.Entities.TicketFlow()
                 {
-                    CurrentRoleId = roleInfo.RoleId,
+                    CurrentRoleId = request.RoleId,
                     InsertDate = DateTime.Now,
                     StatusId = (int)StatusId.inserted,
-                    UserId = request.UserId,
-                    Username = request.Username,
+                    UserId = request.UserId,//سازنده تیکت
+                    Username = "ایجاد شده توسط" + " " + request.Username,//نام سازنده تیکت
                     TicketId = result.Id,
                     PreviousRoleId = request.RoleId
                 });
+                #endregion
+
+                #region Add second TicketFlow for AssignedRole
+                
+                await ticketFlowService.AddAsync(new Domain.Entities.TicketFlow()
+                {
+                    CurrentRoleId = relatedRoleId.RoleId,
+                    InsertDate = DateTime.Now,
+                    StatusId = (int)StatusId.inserted,
+                    UserId = request.UserId,
+                    Username = FindAssignedRoleName(relatedRoleId.RoleId),//ارجاع شده به
+                    TicketId = result.Id,
+                    PreviousRoleId = request.RoleId
+                });
+
+                #region Find assigned role name
+                
+                #endregion
+
+                #endregion
                 return result;
 
             }
@@ -87,6 +113,23 @@ public class AddTicketHandler
             }
 
             return null;
+        }
+        public string FindAssignedRoleName(int relatedRoleId)
+        {
+            var assignRoleName = string.Empty;
+            switch (relatedRoleId)
+            {
+                case (3):
+                    assignRoleName = "ارجاع به معاونت آمار";
+                    break;
+                case (4):
+                    assignRoleName = "ارجاع به معاونت زیرساخت، شبکه و امنیت";
+                    break;
+                case (5):
+                    assignRoleName = "ارجاع به معاونت فناوری اطلاعات";
+                    break;
+            }
+            return assignRoleName;
         }
     }
 }
