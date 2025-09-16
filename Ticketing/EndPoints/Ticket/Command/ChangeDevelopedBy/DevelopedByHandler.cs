@@ -25,7 +25,7 @@ public class DevelopedByHandler
                     InsertDate = DateTime.Now,
                     StatusId = ticketinfo.StatusId,
                     UserId = request.AssignUserId,//شناسه کاربر انجام دهنده
-                    Username = "ارجاع به" + " " + request.AssignUserName,//نام انجام دهنده
+                    Username = FindUsername(ticketinfo , request),//نام انجام دهنده
                     TicketId = ticketinfo.Id,
                     PreviousRoleId = ticketinfo.CurrentRoleId
                 });
@@ -57,6 +57,22 @@ public class DevelopedByHandler
                     break;
             }
             return result;
+        }
+
+        public string FindUsername(Domain.Entities.Ticket ticket, DevelopedByQuery request)
+        {
+            var userName = string.Empty;
+
+            if(request.AssignUserId == ticket.AssignUserId)
+            {
+                userName = "ثبت میزان ساعت صرف شده" + " " + request.AssignUserName + " " + "برای تیکت";
+            }
+            else
+            {
+                userName = "ارجاع به" + " " + request.AssignUserName;
+            }
+
+            return userName;
         }
     }
 }
